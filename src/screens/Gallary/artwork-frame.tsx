@@ -1,11 +1,10 @@
 import { useTexture } from "@react-three/drei";
 import type { ThreeEvent } from "@react-three/fiber";
 
-import type { GalleryArtwork, GalleryWallSide } from "./types";
+import type { GalleryArtwork } from "./types";
 
 type ArtworkFrameProps = {
   artwork: GalleryArtwork;
-  wallSide: GalleryWallSide;
   position: [number, number, number];
   rotation?: [number, number, number];
   onSelect: (artwork: GalleryArtwork) => void;

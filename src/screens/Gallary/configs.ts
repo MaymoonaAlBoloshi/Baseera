@@ -8,7 +8,7 @@ export const galleryConfig = {
     wallOffsetX: 3.95,
     startZ: -8,
     spacingZ: 8,
-    defaultHeight: 1.4,
+    defaultHeight: 2.2,
   },
 
   scene: {
@@ -38,12 +38,19 @@ export const galleryConfig = {
     positionDamping: 0.06,
     lookRangeX: 82,
     lookRangeY: 4,
-    minX: -3.1,
-    maxX: 3.1,
+
+    // Z axis bounds
+    minZ: -39,
+    maxZ: 5,
+
+    // X axis bounds vary by zone (corridor vs gallery room)
+    corridorEntryZ: -17,
+    corridorHalfWidth: 3.5,
+    galleryHalfWidth: 13.5,
 
     lookSensitivityX: 0.0028,
     lookSensitivityY: 0.0018,
     minPitch: -0.7,
     maxPitch: 0.55,
-},
+  },
 } as const;

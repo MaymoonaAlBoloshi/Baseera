@@ -1,38 +1,68 @@
 import { galleryConfig } from "./configs";
-import type { GalleryArtwork, GalleryWallSide } from "./types";
+import type { GalleryWallSegment } from "./map-generator";
+import type { GalleryArtwork } from "./types";
 
 export type PositionedArtwork = {
   artwork: GalleryArtwork;
-  wallSide: GalleryWallSide;
+  wallId: string;
   position: [number, number, number];
   rotation: [number, number, number];
 };
 
+const WALL_PADDING = 2;
+const WALL_OFFSET = 0.08;
+
 export const createArtworkLayout = (
   artworks: GalleryArtwork[],
+  walls: GalleryWallSegment[],
 ): PositionedArtwork[] => {
+  const validWalls = walls.filter((wall) => {
+    const deltaX = wall.end.x - wall.start.x;
+    const deltaZ = wall.end.z - wall.start.z;
+
+    const length = Math.sqrt(deltaX ** 2 + deltaZ ** 2);
+
+    return length >= 8;
+  });
+
   return artworks.map((artwork, index) => {
-    const wallSide =
-      artwork.wallSide ?? (index % 2 === 0 ? "left" : "right");
+    const wall = validWalls[index % validWalls.length];
 
-    const isLeftSide = wallSide === "left";
+    const deltaX = wall.end.x - wall.start.x;
+    const deltaZ = wall.end.z - wall.start.z;
 
-    const x = isLeftSide
-      ? -galleryConfig.artworkLayout.wallOffsetX
-      : galleryConfig.artworkLayout.wallOffsetX;
+    const length = Math.sqrt(deltaX ** 2 + deltaZ ** 2);
 
-    const z =
-      artwork.distanceZ ??
-      galleryConfig.artworkLayout.startZ -
-        index * galleryConfig.artworkLayout.spacingZ;
+    const directionX = deltaX / length;
+    const directionZ = deltaZ / length;
 
-    const y =
-      artwork.height ?? galleryConfig.artworkLayout.defaultHeight;
+    const usableLength = length - WALL_PADDING * 2;
+
+    const offset =
+      WALL_PADDING +
+      ((index % 3) / 2) * usableLength;
+
+    const wallX = wall.start.x + directionX * offset;
+    const wallZ = wall.start.z + directionZ * offset;
+
+    const positionX =
+      wallX + wall.normal.x * WALL_OFFSET;
+
+    const positionZ =
+      wallZ + wall.normal.z * WALL_OFFSET;
+
+    const rotationY =
+      Math.atan2(wall.normal.x, wall.normal.z);
 
     return {
       artwork,
-      wallSide,
-      position: [x, y, z],
-rotation: [0, isLeftSide ? Math.PI / 2 : -Math.PI / 2, 0],    };
+      wallId: wall.id,
+      position: [
+        positionX,
+        galleryConfig.artworkLayout.defaultHeight,
+        positionZ,
+      ],
+      rotation: [0, rotationY, 0],
+    };
   });
 };

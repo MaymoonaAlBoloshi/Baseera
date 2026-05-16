@@ -1,12 +1,9 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
-import type { ShaderMaterial } from "three";
+import { DoubleSide, type ShaderMaterial } from "three";
 
 import { galleryConfig } from "./configs";
-import {
-  wallFragmentShader,
-  wallVertexShader,
-} from "./shaders";
+import { wallFragmentShader, wallVertexShader } from "./shaders";
 
 type SpeedWallProps = {
   position: [number, number, number];
@@ -14,11 +11,7 @@ type SpeedWallProps = {
   size: [number, number];
 };
 
-export const SpeedWall = ({
-  position,
-  rotation,
-  size,
-}: SpeedWallProps) => {
+export const SpeedWall = ({ position, rotation, size }: SpeedWallProps) => {
   const materialRef = useRef<ShaderMaterial | null>(null);
 
   useFrame((state) => {
@@ -26,8 +19,7 @@ export const SpeedWall = ({
       return;
     }
 
-    materialRef.current.uniforms.uTime.value =
-      state.clock.elapsedTime;
+    materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
   });
 
   return (
@@ -38,6 +30,7 @@ export const SpeedWall = ({
         ref={materialRef}
         vertexShader={wallVertexShader}
         fragmentShader={wallFragmentShader}
+        side={DoubleSide}
         uniforms={{
           uTime: {
             value: 0,

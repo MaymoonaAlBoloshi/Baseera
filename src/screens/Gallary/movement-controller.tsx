@@ -10,9 +10,7 @@ type MovementControllerProps = {
   isDisabled: boolean;
 };
 
-export const MovementController = ({
-  isDisabled,
-}: MovementControllerProps) => {
+export const MovementController = ({ isDisabled }: MovementControllerProps) => {
   const { camera, gl } = useThree();
 
   const yaw = useRef(0);
@@ -61,15 +59,11 @@ export const MovementController = ({
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (
-        isDisabled ||
-        document.pointerLockElement !== gl.domElement
-      ) {
+      if (isDisabled || document.pointerLockElement !== gl.domElement) {
         return;
       }
 
-      yaw.current -=
-        event.movementX * galleryConfig.movement.lookSensitivityX;
+      yaw.current -= event.movementX * galleryConfig.movement.lookSensitivityX;
 
       pitch.current -=
         event.movementY * galleryConfig.movement.lookSensitivityY;
@@ -148,9 +142,21 @@ export const MovementController = ({
       targetPosition.current.add(movementVector);
     }
 
+    const inCorridor =
+      targetPosition.current.z > galleryConfig.movement.corridorEntryZ;
+
+    const xLimit = inCorridor
+      ? galleryConfig.movement.corridorHalfWidth
+      : galleryConfig.movement.galleryHalfWidth;
+
     targetPosition.current.x = Math.max(
-      galleryConfig.movement.minX,
-      Math.min(galleryConfig.movement.maxX, targetPosition.current.x),
+      -xLimit,
+      Math.min(xLimit, targetPosition.current.x),
+    );
+
+    targetPosition.current.z = Math.max(
+      galleryConfig.movement.minZ,
+      Math.min(galleryConfig.movement.maxZ, targetPosition.current.z),
     );
 
     targetPosition.current.y = galleryConfig.movement.cameraHeight;
