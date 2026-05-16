@@ -1,19 +1,24 @@
-import { SpeedWall } from "./speed-walls";
+import { speedGridConfig } from "./configs";
+import { SpeedWall } from "./speed-wall";
 
-export function SpeedGridScene() {
+export const LandingScene = () => {
+  const { walls, colors } = speedGridConfig;
+
   return (
     <>
-      <color attach="background" args={["#02030a"]} />
+      <color attach="background" args={[colors.background]} />
 
       <SpeedWall
-        position={[-4, 1, -12]}
-        rotation={[0, Math.PI / 2.7, 0]}
+        config={speedGridConfig}
+        position={[-walls.distanceFromCenter, 0, walls.depth]}
+        rotation={[0, Math.PI / 2, 0]}
       />
 
       <SpeedWall
-        position={[4, 1, -12]}
-        rotation={[0, -Math.PI / 2.7, 0]}
+        config={speedGridConfig}
+        position={[walls.distanceFromCenter, 0, walls.depth]}
+        rotation={[0, Math.PI / 2, 0]}
       />
     </>
   );
-}
+};

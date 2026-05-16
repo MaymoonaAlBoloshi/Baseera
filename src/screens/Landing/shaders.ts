@@ -3,35 +3,83 @@ export const speedGridVertexShader = `
 
   void main() {
     vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    gl_Position =
+      projectionMatrix *
+      modelViewMatrix *
+      vec4(position, 1.0);
   }
 `;
 
 export const speedGridFragmentShader = `
   uniform float uTime;
+
   uniform float uSpeed;
+  uniform float uDepthDensity;
+  uniform float uVerticalDensity;
+
+  uniform float uDepthThickness;
+  uniform float uVerticalThickness;
+
+  uniform vec3 uWireColor;
+
+  uniform float uFadePower;
+  uniform float uGradientStrength;
 
   varying vec2 vUv;
 
-  float gridLine(float value, float thickness) {
-    return 1.0 - smoothstep(0.0, thickness, abs(fract(value) - 0.5));
+  float gridLine(
+    float value,
+    float thickness
+  ) {
+    return smoothstep(
+      thickness,
+      0.0,
+      abs(fract(value) - 0.5)
+    );
   }
 
   void main() {
     vec2 uv = vUv;
 
-    float movingDepthLines = gridLine(uv.y * 22.0 + uTime * uSpeed, 0.035);
-    float verticalLines = gridLine(uv.x * 8.0, 0.025);
+    float movingDepth =
+      (1.0 - uv.x) *
+      uDepthDensity -
+      (uTime * uSpeed);
 
-    float grid = max(movingDepthLines, verticalLines);
+    float depthLines =
+      gridLine(
+        movingDepth,
+        uDepthThickness
+      );
 
-    float distanceFade = smoothstep(0.05, 0.95, uv.y);
+    float verticalLines =
+      gridLine(
+        uv.y * uVerticalDensity,
+        uVerticalThickness
+      );
 
-    vec3 backgroundColor = vec3(0.005, 0.007, 0.012);
-    vec3 gridColor = vec3(0.08, 0.75, 1.0);
+    float grid =
+      max(depthLines, verticalLines);
 
-    vec3 color = mix(backgroundColor, gridColor, grid * distanceFade);
+    float fade =
+      pow(
+        1.0 - uv.x,
+        uFadePower
+      );
 
-    gl_FragColor = vec4(color, 1.0);
+    float wallGradient =
+      pow(
+        sin(uv.y * 3.14159),
+        uGradientStrength
+      );
+
+    float finalIntensity =
+      grid *
+      fade *
+      wallGradient;
+
+    gl_FragColor =
+      vec4(uWireColor, finalIntensity);
   }
 `;
