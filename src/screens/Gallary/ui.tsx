@@ -12,6 +12,7 @@ import type { GalleryArtwork } from "./types";
 
 type GalleryUiProps = {
   mode: "selection" | "artist";
+  isMobile: boolean;
   selectedArtwork: GalleryArtwork | null;
   nearbyArtwork: GalleryArtwork | null;
   currentArtistArtwork: GalleryArtwork | null;
@@ -26,6 +27,7 @@ const dream = { ease: [0.4, 0, 0.2, 1] as const, duration: 0.75 };
 
 export const GalleryUi = ({
   mode,
+  isMobile,
   selectedArtwork,
   nearbyArtwork,
   currentArtistArtwork,
@@ -39,14 +41,18 @@ export const GalleryUi = ({
 
   return (
     <>
-      {/* ── Back button — artist mode only ────────────── */}
+      {/* ── Back button — artist mode only ────────── */}
       <AnimatePresence>
         {mode === "artist" && !selectedArtwork && (
           <motion.button
             key="back"
             type="button"
             onClick={onBack}
-            className="absolute left-8 top-8 z-10 border border-gallery-border px-5 py-2.5 text-xs tracking-[0.25em] text-gallery-text-muted uppercase transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary"
+            className={`absolute left-8 top-8 z-10 border border-gallery-border text-gallery-text-muted uppercase transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary ${
+              isMobile
+                ? "px-6 py-4 text-sm tracking-[0.2em]"
+                : "px-5 py-2.5 text-xs tracking-[0.25em]"
+            }`}
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -8 }}
@@ -62,7 +68,7 @@ export const GalleryUi = ({
         {!selectedArtwork && mode === "selection" && (
           <motion.div
             key="baseera-hud"
-            className="pointer-events-none absolute bottom-10 left-10"
+            className="pointer-events-none absolute bottom-10 left-4 sm:left-10"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
@@ -71,19 +77,29 @@ export const GalleryUi = ({
             <p className="text-[10px] tracking-[0.4em] text-gallery-text-muted uppercase mb-2">
               Virtual Gallery
             </p>
-            <p className="text-3xl font-light text-gallery-text-primary">Baseera</p>
+            <p className="text-3xl font-light text-gallery-text-primary">
+              Baseera
+            </p>
             <p className="mt-1.5 text-xs text-gallery-text-secondary">
               A gallery for independent artists
             </p>
             <div className="mt-4 flex gap-5">
               <div>
-                <p className="text-base font-light text-gallery-text-primary">9</p>
-                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">Artists</p>
+                <p className="text-base font-light text-gallery-text-primary">
+                  9
+                </p>
+                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
+                  Artists
+                </p>
               </div>
               <div className="w-px bg-gallery-border" />
               <div>
-                <p className="text-base font-light text-gallery-text-primary">36</p>
-                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">Works</p>
+                <p className="text-base font-light text-gallery-text-primary">
+                  36
+                </p>
+                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
+                  Works
+                </p>
               </div>
             </div>
           </motion.div>
@@ -92,7 +108,7 @@ export const GalleryUi = ({
         {!selectedArtwork && mode === "artist" && displayArtist && (
           <motion.div
             key={`artist-hud-${displayArtist.name}`}
-            className="pointer-events-none absolute bottom-10 left-10"
+            className="pointer-events-none absolute bottom-10 left-4 sm:left-10"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
@@ -106,27 +122,39 @@ export const GalleryUi = ({
             </p>
             <div className="mt-4 flex gap-5">
               <div>
-                <p className="text-base font-light text-gallery-text-primary">{displayArtist.followers}</p>
-                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">Followers</p>
+                <p className="text-base font-light text-gallery-text-primary">
+                  {displayArtist.followers}
+                </p>
+                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
+                  Followers
+                </p>
               </div>
               <div className="w-px bg-gallery-border" />
               <div>
-                <p className="text-base font-light text-gallery-text-primary">{displayArtist.supporters}</p>
-                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">Supporters</p>
+                <p className="text-base font-light text-gallery-text-primary">
+                  {displayArtist.supporters}
+                </p>
+                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
+                  Supporters
+                </p>
               </div>
               <div className="w-px bg-gallery-border" />
               <div>
-                <p className="text-base font-light text-gallery-text-primary">{displayArtist.visitors}</p>
-                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">Visitors</p>
+                <p className="text-base font-light text-gallery-text-primary">
+                  {displayArtist.visitors}
+                </p>
+                <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
+                  Visitors
+                </p>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── Nearby painting title hint ─────────────────── */}
+      {/* ── Nearby painting title hint ─────────────── */}
       <AnimatePresence>
-        {!selectedArtwork && nearbyArtwork && (
+        {!selectedArtwork && nearbyArtwork && !isMobile && (
           <motion.div
             key={nearbyArtwork.id}
             className="pointer-events-none absolute bottom-10 right-10 text-right"
@@ -135,7 +163,9 @@ export const GalleryUi = ({
             exit={{ opacity: 0, y: 8 }}
             transition={dream}
           >
-            <p className="text-sm font-light text-gallery-text-primary">{nearbyArtwork.title}</p>
+            <p className="text-sm font-light text-gallery-text-primary">
+              {nearbyArtwork.title}
+            </p>
             <p className="mt-1 text-xs text-gallery-text-muted">
               {mode === "selection" ? "Click to enter" : "Click to view"}
             </p>
@@ -182,7 +212,7 @@ const SelectedOverlay = ({
   return (
     <motion.section
       key="selected"
-      className="absolute inset-0 z-10 flex items-center justify-center px-8"
+      className="absolute inset-0 z-10 flex items-center justify-center overflow-y-auto px-4 py-4 sm:px-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -199,7 +229,7 @@ const SelectedOverlay = ({
 
       {/* Content */}
       <motion.article
-        className="relative z-10 grid max-w-6xl w-full grid-cols-[minmax(0,1fr)_320px] gap-12"
+        className="relative z-10 grid max-w-6xl w-full grid-cols-1 gap-6 sm:grid-cols-[minmax(0,1fr)_320px] sm:gap-12"
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
@@ -210,7 +240,7 @@ const SelectedOverlay = ({
           <img
             src={artwork.imageSrc}
             alt={artwork.title}
-            className="max-h-[80vh] max-w-full rounded-sm object-contain"
+            className="max-h-[40vh] max-w-full rounded-sm object-contain sm:max-h-[80vh]"
           />
         </div>
 
@@ -235,16 +265,28 @@ const SelectedOverlay = ({
           {/* Compact metadata */}
           <div className="border-t border-gallery-border pt-4 space-y-1.5">
             <div className="flex justify-between">
-              <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">Year</span>
-              <span className="text-[11px] text-gallery-text-secondary">{artwork.year}</span>
+              <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
+                Year
+              </span>
+              <span className="text-[11px] text-gallery-text-secondary">
+                {artwork.year}
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">Medium</span>
-              <span className="text-[11px] text-gallery-text-secondary text-right max-w-[58%]">{artwork.medium}</span>
+              <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
+                Medium
+              </span>
+              <span className="text-[11px] text-gallery-text-secondary text-right max-w-[58%]">
+                {artwork.medium}
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">Size</span>
-              <span className="text-[10px] text-gallery-text-muted">{artwork.dimensions}</span>
+              <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
+                Size
+              </span>
+              <span className="text-[10px] text-gallery-text-muted">
+                {artwork.dimensions}
+              </span>
             </div>
           </div>
 
@@ -311,7 +353,10 @@ const SelectedOverlay = ({
                     />
                     <button
                       type="button"
-                      onClick={() => { setComment(""); setCommenting(false); }}
+                      onClick={() => {
+                        setComment("");
+                        setCommenting(false);
+                      }}
                       className="border border-gallery-border px-3 py-2 text-gallery-text-muted hover:text-gallery-text-secondary transition"
                     >
                       <X size={12} />
@@ -332,7 +377,9 @@ const SelectedOverlay = ({
               }`}
             >
               <BadgeDollarSign size={13} />
-              {supported ? `Supporting · $${supportAmount}/mo` : "Support artist"}
+              {supported
+                ? `Supporting · $${supportAmount}/mo`
+                : "Support artist"}
             </button>
 
             {/* Return */}
@@ -375,8 +422,12 @@ const SelectedOverlay = ({
 
               <div className="mt-6">
                 <div className="flex justify-between mb-3">
-                  <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">Monthly contribution</span>
-                  <span className="text-sm font-light text-gallery-text-primary">${supportAmount} / mo</span>
+                  <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
+                    Monthly contribution
+                  </span>
+                  <span className="text-sm font-light text-gallery-text-primary">
+                    ${supportAmount} / mo
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -388,19 +439,27 @@ const SelectedOverlay = ({
                   className="w-full accent-amber-400 cursor-pointer"
                 />
                 <div className="flex justify-between mt-1">
-                  <span className="text-[10px] text-gallery-text-muted">$1</span>
-                  <span className="text-[10px] text-gallery-text-muted">$50</span>
+                  <span className="text-[10px] text-gallery-text-muted">
+                    $1
+                  </span>
+                  <span className="text-[10px] text-gallery-text-muted">
+                    $50
+                  </span>
                 </div>
               </div>
 
               <p className="mt-4 text-[10px] leading-5 text-gallery-text-muted">
-                Your support goes directly to the artist each month. Cancel anytime.
+                Your support goes directly to the artist each month. Cancel
+                anytime.
               </p>
 
               <div className="mt-6 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => { onSupportArtist(artwork.artist.name); setSupportOpen(false); }}
+                  onClick={() => {
+                    onSupportArtist(artwork.artist.name);
+                    setSupportOpen(false);
+                  }}
                   className="flex-1 border border-emerald-500/50 py-2.5 text-[10px] tracking-[0.2em] text-emerald-400 uppercase transition hover:bg-emerald-500/10"
                 >
                   Confirm

@@ -1,10 +1,7 @@
-import {Landing } from './screens/Landing'
-import {Gallery} from './screens/Gallary'
+import { Gallery } from "./screens/Gallary";
 
 function App() {
-  return (
-    <Gallery/>
-  )
+  return <Gallery />;
 }
 
-export default App
+export default App;

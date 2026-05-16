@@ -1,20 +1,26 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import { Euler, Vector3 } from "three";
+import type { MutableRefObject } from "react";
 
 import { galleryConfig } from "./configs";
 import type { GalleryBounds } from "./map-generator";
+import type { MobileInputState } from "./types";
 
 const pressedKeys = new Set<string>();
 
 type MovementControllerProps = {
   isDisabled: boolean;
   bounds: GalleryBounds;
+  isMobile: boolean;
+  mobileInputRef: MutableRefObject<MobileInputState>;
 };
 
 export const MovementController = ({
   isDisabled,
   bounds,
+  isMobile,
+  mobileInputRef,
 }: MovementControllerProps) => {
   const { camera, gl } = useThree();
 
@@ -55,6 +61,9 @@ export const MovementController = ({
   }, [gl.domElement, isDisabled]);
 
   useEffect(() => {
+    // Mobile: no pointer lock or keyboard needed
+    if (isMobile) return;
+
     const handleClick = () => {
       if (isDisabled) {
         return;
@@ -103,12 +112,27 @@ export const MovementController = ({
       window.removeEventListener("keyup", handleKeyUp);
       pressedKeys.clear();
     };
-  }, [gl.domElement, isDisabled]);
+  }, [gl.domElement, isDisabled, isMobile]);
 
   useFrame(() => {
     if (isDisabled) {
       pressedKeys.clear();
       return;
+    }
+
+    // Apply mobile look deltas (accumulated since last frame)
+    if (isMobile) {
+      const { lookDX, lookDY } = mobileInputRef.current;
+      if (lookDX !== 0 || lookDY !== 0) {
+        yaw.current -= lookDX;
+        pitch.current -= lookDY;
+        pitch.current = Math.max(
+          galleryConfig.movement.minPitch,
+          Math.min(galleryConfig.movement.maxPitch, pitch.current),
+        );
+        mobileInputRef.current.lookDX = 0;
+        mobileInputRef.current.lookDY = 0;
+      }
     }
 
     cameraRotation.set(pitch.current, yaw.current, 0);
@@ -123,20 +147,23 @@ export const MovementController = ({
 
     movementVector.set(0, 0, 0);
 
-    if (pressedKeys.has("w") || pressedKeys.has("arrowup")) {
-      movementVector.add(forwardDirection);
-    }
-
-    if (pressedKeys.has("s") || pressedKeys.has("arrowdown")) {
-      movementVector.sub(forwardDirection);
-    }
-
-    if (pressedKeys.has("a") || pressedKeys.has("arrowleft")) {
-      movementVector.sub(rightDirection);
-    }
-
-    if (pressedKeys.has("d") || pressedKeys.has("arrowright")) {
-      movementVector.add(rightDirection);
+    if (isMobile) {
+      const { moveX, moveZ } = mobileInputRef.current;
+      if (moveX !== 0) movementVector.addScaledVector(rightDirection, moveX);
+      if (moveZ !== 0) movementVector.addScaledVector(forwardDirection, -moveZ);
+    } else {
+      if (pressedKeys.has("w") || pressedKeys.has("arrowup")) {
+        movementVector.add(forwardDirection);
+      }
+      if (pressedKeys.has("s") || pressedKeys.has("arrowdown")) {
+        movementVector.sub(forwardDirection);
+      }
+      if (pressedKeys.has("a") || pressedKeys.has("arrowleft")) {
+        movementVector.sub(rightDirection);
+      }
+      if (pressedKeys.has("d") || pressedKeys.has("arrowright")) {
+        movementVector.add(rightDirection);
+      }
     }
 
     if (movementVector.lengthSq() > 0) {

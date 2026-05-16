@@ -13,6 +13,7 @@ uniform float uDriftStrength;
 uniform float uDriftSpeed;
 uniform float uShadowStrength;
 uniform float uAspectRatio;
+uniform vec3 uWireColor;
 
 varying vec2 vUv;
 
@@ -55,7 +56,7 @@ void main() {
   float wireAlpha = wire * fade * uDriftStrength * pulse;
 
   // Overlay only — base colour and lighting come from meshStandardMaterial beneath
-  vec3 wireColor = vec3(0.13, 0.115, 0.098);
+  vec3 wireColor = uWireColor;
 
   gl_FragColor = vec4(wireColor, wireAlpha * 0.65);
 }

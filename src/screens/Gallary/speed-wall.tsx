@@ -9,9 +9,21 @@ type SpeedWallProps = {
   position: [number, number, number];
   rotation?: [number, number, number];
   size: [number, number];
+  wallBaseColor: string;
+  wallWireColor: [number, number, number];
+  driftStrength: number;
+  driftSpeed: number;
 };
 
-export const SpeedWall = ({ position, rotation, size }: SpeedWallProps) => {
+export const SpeedWall = ({
+  position,
+  rotation,
+  size,
+  wallBaseColor,
+  wallWireColor,
+  driftStrength,
+  driftSpeed,
+}: SpeedWallProps) => {
   const materialRef = useRef<ShaderMaterial | null>(null);
 
   useFrame((state) => {
@@ -28,7 +40,7 @@ export const SpeedWall = ({ position, rotation, size }: SpeedWallProps) => {
       <mesh>
         <planeGeometry args={[size[0], size[1]]} />
         <meshStandardMaterial
-          color="#0d0b09"
+          color={wallBaseColor}
           roughness={1}
           metalness={0}
           side={DoubleSide}
@@ -51,8 +63,9 @@ export const SpeedWall = ({ position, rotation, size }: SpeedWallProps) => {
           uniforms={{
             uTime: { value: 0 },
             uAspectRatio: { value: size[0] / size[1] },
-            uDriftStrength: { value: galleryConfig.walls.driftStrength },
-            uDriftSpeed: { value: galleryConfig.walls.driftSpeed },
+            uWireColor: { value: wallWireColor },
+            uDriftStrength: { value: driftStrength },
+            uDriftSpeed: { value: driftSpeed },
             uShadowStrength: { value: galleryConfig.walls.shadowStrength },
           }}
         />

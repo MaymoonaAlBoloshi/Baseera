@@ -9,9 +9,14 @@ import type { GalleryPoint } from "./map-generator";
 type ArtworkLightProps = {
   position: [number, number, number];
   normal: GalleryPoint;
+  color: string;
 };
 
-export const ArtworkLight = ({ position, normal }: ArtworkLightProps) => {
+export const ArtworkLight = ({
+  position,
+  normal,
+  color,
+}: ArtworkLightProps) => {
   const lightRef = useRef<RectAreaLight | null>(null);
   const { camera } = useThree();
   const currentIntensityRef = useRef(0);
@@ -55,7 +60,7 @@ export const ArtworkLight = ({ position, normal }: ArtworkLightProps) => {
       width={galleryConfig.artworkLighting.width}
       height={galleryConfig.artworkLighting.height}
       intensity={0}
-      color={galleryConfig.artworkLighting.color}
+      color={color}
     />
   );
 };

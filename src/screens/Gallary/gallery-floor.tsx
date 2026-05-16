@@ -2,6 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import type { ShaderMaterial } from "three";
 
+import type { ArtistGalleryConfig } from "./configs";
 import type { GalleryFloorSegment } from "./map-generator";
 import {
   ceilingFragmentShader,
@@ -12,9 +13,10 @@ import {
 
 type GalleryFloorProps = {
   floor: GalleryFloorSegment;
+  artistConfig: ArtistGalleryConfig;
 };
 
-export const GalleryFloor = ({ floor }: GalleryFloorProps) => {
+export const GalleryFloor = ({ floor, artistConfig }: GalleryFloorProps) => {
   const overlayRef = useRef<ShaderMaterial | null>(null);
   const isCeiling = floor.id.includes("ceiling");
   const aspectRatio = floor.size[0] / floor.size[1];
@@ -31,7 +33,11 @@ export const GalleryFloor = ({ floor }: GalleryFloorProps) => {
       <mesh>
         <planeGeometry args={[floor.size[0], floor.size[1]]} />
         <meshStandardMaterial
-          color={isCeiling ? "#060504" : "#0d0b09"}
+          color={
+            isCeiling
+              ? artistConfig.ceilingBaseColor
+              : artistConfig.floorBaseColor
+          }
           roughness={1}
           metalness={0}
         />

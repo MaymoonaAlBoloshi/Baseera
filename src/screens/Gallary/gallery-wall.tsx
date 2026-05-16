@@ -1,13 +1,15 @@
 import { useMemo } from "react";
 
+import type { ArtistGalleryConfig } from "./configs";
 import type { GalleryWallSegment } from "./map-generator";
 import { SpeedWall } from "./speed-wall";
 
 type GalleryWallProps = {
   wall: GalleryWallSegment;
+  artistConfig: ArtistGalleryConfig;
 };
 
-export const GalleryWall = ({ wall }: GalleryWallProps) => {
+export const GalleryWall = ({ wall, artistConfig }: GalleryWallProps) => {
   const { position, size, rotationY } = useMemo(() => {
     const centerX = (wall.start.x + wall.end.x) / 2;
     const centerZ = (wall.start.z + wall.end.z) / 2;
@@ -28,6 +30,14 @@ export const GalleryWall = ({ wall }: GalleryWallProps) => {
   }, [wall]);
 
   return (
-    <SpeedWall position={position} rotation={[0, rotationY, 0]} size={size} />
+    <SpeedWall
+      position={position}
+      rotation={[0, rotationY, 0]}
+      size={size}
+      wallBaseColor={artistConfig.wallBaseColor}
+      wallWireColor={artistConfig.wallWireColor}
+      driftStrength={artistConfig.driftStrength}
+      driftSpeed={artistConfig.driftSpeed}
+    />
   );
 };

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { MutableRefObject } from "react";
 
 import { ArtworkFrame } from "./artwork-frame";
 import { ArtworkLight } from "./artwork-light";
@@ -11,11 +12,15 @@ import { createGalleryMap } from "./map-generator";
 import { MovementController } from "./movement-controller";
 import { ProximityDetector } from "./proximity-detector";
 
-import type { GalleryArtwork } from "./types";
+import type { ArtistGalleryConfig } from "./configs";
+import type { GalleryArtwork, MobileInputState } from "./types";
 
 type GallerySceneProps = {
   seed: string;
   artworks: GalleryArtwork[];
+  artistConfig: ArtistGalleryConfig;
+  isMobile: boolean;
+  mobileInputRef: MutableRefObject<MobileInputState>;
   onSelectArtwork: (artwork: GalleryArtwork) => void;
   onNearbyArtworkChange: (artwork: GalleryArtwork | null) => void;
   isFocusMode: boolean;
@@ -24,6 +29,9 @@ type GallerySceneProps = {
 export const GalleryScene = ({
   seed,
   artworks,
+  artistConfig,
+  isMobile,
+  mobileInputRef,
   onSelectArtwork,
   onNearbyArtworkChange,
   isFocusMode,
@@ -38,22 +46,45 @@ export const GalleryScene = ({
   return (
     <>
       <RenderSettings />
-      <color attach="background" args={["#050504"]} />
-      <fog attach="fog" args={["#050504", 8, 32]} />
+      <color attach="background" args={[artistConfig.backgroundColor]} />
+      <fog
+        attach="fog"
+        args={[
+          artistConfig.fogColor,
+          artistConfig.fogNear,
+          artistConfig.fogFar,
+        ]}
+      />
 
-      <MovementController isDisabled={isFocusMode} bounds={galleryMap.bounds} />
+      <MovementController
+        isDisabled={isFocusMode}
+        bounds={galleryMap.bounds}
+        isMobile={isMobile}
+        mobileInputRef={mobileInputRef}
+      />
       <FootstepAudio isMuted={isFocusMode} />
 
-      <ambientLight intensity={0.08} />
+      <ambientLight
+        intensity={artistConfig.ambientIntensity}
+        color={artistConfig.ambientColor}
+      />
 
-      <directionalLight position={[0, 5, 6]} intensity={0.8} color="#f4f0e8" />
+      <directionalLight
+        position={[0, 5, 6]}
+        intensity={artistConfig.directionalIntensity}
+        color={artistConfig.directionalColor}
+      />
 
       {galleryMap.floors.map((floor) => (
-        <GalleryFloor key={floor.id} floor={floor} />
+        <GalleryFloor
+          key={floor.id}
+          floor={floor}
+          artistConfig={artistConfig}
+        />
       ))}
 
       {galleryMap.walls.map((wall) => (
-        <GalleryWall key={wall.id} wall={wall} />
+        <GalleryWall key={wall.id} wall={wall} artistConfig={artistConfig} />
       ))}
 
       <ProximityDetector
@@ -66,6 +97,7 @@ export const GalleryScene = ({
           key={`${artwork.id}-light`}
           position={position}
           normal={normal}
+          color={artistConfig.artworkLightColor}
         />
       ))}
 
