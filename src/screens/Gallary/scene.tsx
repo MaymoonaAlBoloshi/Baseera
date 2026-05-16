@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { ArtworkFrame } from "./artwork-frame";
 import { ArtworkLight } from "./artwork-light";
 import { RenderSettings } from "./render-settings";
+import { FootstepAudio } from "./footstep-audio";
 import { createArtworkLayout } from "./artwork-layout";
-import { galleryArtworks } from "./data";
 import { GalleryFloor } from "./gallery-floor";
 import { GalleryWall } from "./gallery-wall";
 import { createGalleryMap } from "./map-generator";
@@ -15,6 +15,7 @@ import type { GalleryArtwork } from "./types";
 
 type GallerySceneProps = {
   seed: string;
+  artworks: GalleryArtwork[];
   onSelectArtwork: (artwork: GalleryArtwork) => void;
   onNearbyArtworkChange: (artwork: GalleryArtwork | null) => void;
   isFocusMode: boolean;
@@ -22,6 +23,7 @@ type GallerySceneProps = {
 
 export const GalleryScene = ({
   seed,
+  artworks,
   onSelectArtwork,
   onNearbyArtworkChange,
   isFocusMode,
@@ -29,8 +31,8 @@ export const GalleryScene = ({
   const galleryMap = useMemo(() => createGalleryMap(seed), [seed]);
 
   const artworkLayout = useMemo(
-    () => createArtworkLayout(galleryArtworks, galleryMap.walls),
-    [galleryMap.walls],
+    () => createArtworkLayout(artworks, galleryMap.walls),
+    [artworks, galleryMap.walls],
   );
 
   return (
@@ -40,6 +42,7 @@ export const GalleryScene = ({
       <fog attach="fog" args={["#050504", 8, 32]} />
 
       <MovementController isDisabled={isFocusMode} bounds={galleryMap.bounds} />
+      <FootstepAudio isMuted={isFocusMode} />
 
       <ambientLight intensity={0.08} />
 

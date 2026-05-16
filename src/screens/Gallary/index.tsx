@@ -2,13 +2,17 @@ import { Canvas } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 
 import { galleryConfig } from "./configs";
+import { BackgroundMusic } from "./background-music";
 import { GalleryScene } from "./scene";
 import { GalleryUi } from "./ui";
+import { galleryArtworks, artistCollections } from "./data";
 
-import type { GalleryArtwork } from "./types";
+import type { GalleryArtwork, GalleryView } from "./types";
 
 export const Gallery = () => {
   const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
+
+  const [view, setView] = useState<GalleryView>({ mode: "selection" });
 
   const [selectedArtwork, setSelectedArtwork] = useState<GalleryArtwork | null>(
     null,
@@ -16,6 +20,33 @@ export const Gallery = () => {
   const [nearbyArtwork, setNearbyArtwork] = useState<GalleryArtwork | null>(
     null,
   );
+
+  const currentArtworks =
+    view.mode === "artist"
+      ? (artistCollections[view.artworkId] ?? [])
+      : galleryArtworks;
+
+  const currentSeed = view.mode === "artist" ? view.artworkId : "selection";
+
+  const currentArtistArtwork =
+    view.mode === "artist"
+      ? (galleryArtworks.find((a) => a.id === view.artworkId) ?? null)
+      : null;
+
+  const [supportedArtists, setSupportedArtists] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const handleSupportArtist = (artistName: string) => {
+    setSupportedArtists((prev) => new Set(prev).add(artistName));
+  };
+
+  // Reset nearby + selected when switching views
+  useEffect(() => {
+    setSelectedArtwork(null);
+    setNearbyArtwork(null);
+  }, [view]);
+
   useEffect(() => {
     if (!selectedArtwork) {
       return;
@@ -26,6 +57,15 @@ export const Gallery = () => {
     }
   }, [selectedArtwork]);
 
+  const handleSelectArtwork = (artwork: GalleryArtwork) => {
+    if (view.mode === "selection") {
+      // Navigate into that artist's gallery
+      setView({ mode: "artist", artworkId: artwork.id });
+      return;
+    }
+    setSelectedArtwork(artwork);
+  };
+
   const handleCloseArtwork = async () => {
     setSelectedArtwork(null);
 
@@ -34,9 +74,13 @@ export const Gallery = () => {
       ?.requestPointerLock();
   };
 
+  const handleBack = () => {
+    setView({ mode: "selection" });
+  };
+
   return (
     <main className="relative h-screen w-screen overflow-hidden bg-gallery-background">
-      <div ref={canvasWrapperRef} className="h-full w-full">
+      <div key={currentSeed} ref={canvasWrapperRef} className="h-full w-full">
         <Canvas
           shadows
           dpr={[1, 2]}
@@ -51,8 +95,9 @@ export const Gallery = () => {
           }}
         >
           <GalleryScene
-            seed="oh"
-            onSelectArtwork={setSelectedArtwork}
+            seed={currentSeed}
+            artworks={currentArtworks}
+            onSelectArtwork={handleSelectArtwork}
             onNearbyArtworkChange={setNearbyArtwork}
             isFocusMode={Boolean(selectedArtwork)}
           />
@@ -60,10 +105,17 @@ export const Gallery = () => {
       </div>
 
       <GalleryUi
+        mode={view.mode}
         selectedArtwork={selectedArtwork}
         nearbyArtwork={nearbyArtwork}
+        currentArtistArtwork={currentArtistArtwork}
+        supportedArtists={supportedArtists}
+        onSupportArtist={handleSupportArtist}
         onCloseArtwork={handleCloseArtwork}
+        onBack={handleBack}
       />
+
+      <BackgroundMusic />
     </main>
   );
 };

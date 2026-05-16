@@ -120,8 +120,8 @@ export const createGalleryMap = (seed: string): GalleryMap => {
 
   // ── Shoulder walls (corridor → gallery transition) ─────────────────────────
   walls.push(
-    { id: "shoulder-left",  start: { x: -galleryHalfX, z: corridorEndZ }, end: { x: -corridorHalfX, z: corridorEndZ }, normal: { x: 0, z: 1 }, height: wallHeight },
-    { id: "shoulder-right", start: { x:  corridorHalfX, z: corridorEndZ }, end: { x:  galleryHalfX, z: corridorEndZ }, normal: { x: 0, z: 1 }, height: wallHeight },
+    { id: "shoulder-left",  start: { x: -galleryHalfX, z: corridorEndZ }, end: { x: -corridorHalfX, z: corridorEndZ }, normal: { x: 0, z: -1 }, height: wallHeight },
+    { id: "shoulder-right", start: { x:  corridorHalfX, z: corridorEndZ }, end: { x:  galleryHalfX, z: corridorEndZ }, normal: { x: 0, z: -1 }, height: wallHeight },
   );
 
   // ── Gallery floor / ceiling ────────────────────────────────────────────────

@@ -3,15 +3,13 @@ import { useRef } from "react";
 import { Vector3 } from "three";
 
 import type { PositionedArtwork } from "./artwork-layout";
+import { galleryConfig } from "./configs";
 import type { GalleryArtwork } from "./types";
 
 type ProximityDetectorProps = {
   artworks: PositionedArtwork[];
   onNearbyArtworkChange: (artwork: GalleryArtwork | null) => void;
 };
-
-const NEARBY_DISTANCE = 5;
-const FACING_THRESHOLD = 0.35; // cos(~70°) — must be broadly facing the artwork
 
 const _toArtwork = new Vector3();
 const _cameraDir = new Vector3();
@@ -29,23 +27,24 @@ export const ProximityDetector = ({
     const nearbyArtwork = artworks.find(({ position }) => {
       const [x, y, z] = position;
 
-      const distance = camera.position.distanceTo({ x, y, z });
-      if (distance > NEARBY_DISTANCE) return false;
+      if (
+        camera.position.distanceTo({ x, y, z }) >
+        galleryConfig.proximity.nearbyDistance
+      ) {
+        return false;
+      }
 
-      // Check that camera is roughly facing the artwork
       _toArtwork
         .set(x - camera.position.x, 0, z - camera.position.z)
         .normalize();
       const dot = _cameraDir.x * _toArtwork.x + _cameraDir.z * _toArtwork.z;
 
-      return dot >= FACING_THRESHOLD;
+      return dot >= galleryConfig.proximity.facingThreshold;
     });
 
     const nextArtworkId = nearbyArtwork?.artwork.id ?? null;
 
-    if (activeArtworkIdRef.current === nextArtworkId) {
-      return;
-    }
+    if (activeArtworkIdRef.current === nextArtworkId) return;
 
     activeArtworkIdRef.current = nextArtworkId;
     onNearbyArtworkChange(nearbyArtwork?.artwork ?? null);

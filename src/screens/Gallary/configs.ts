@@ -11,20 +11,22 @@ export const galleryConfig = {
     defaultHeight: 2.2,
   },
 
-artworkLighting: {
-  color: "#ffe6b8",
-  intensity: 1.5,
-  width: 3.2,
-  height: 4.2,
-  offsetFromWall: 1.2,
-  heightOffset: 0.8,
-},
+  artworkLighting: {
+    color: "#ffe6b8",
+    intensity: 1.5,
+    width: 3.2,
+    height: 4.2,
+    offsetFromWall: 1.2,
+    heightOffset: 0.8,
+    proximityDistance: 12,
+    fadeSpeed: 0.18,
+  },
 
   scene: {
     backgroundColor: "var(--color-gallery-background)",
     fogColor: "var(--color-gallery-background)",
-    fogNear: 8,
-    fogFar: 32,
+    fogNear: 6,
+    fogFar: 20,
   },
 
   corridor: {
@@ -35,14 +37,36 @@ artworkLighting: {
   },
 
   walls: {
-    driftStrength: 0.48, // wire visibility (fragment) + subtle Z-breathe (vertex)
-    driftSpeed: 0.07,    // slow pattern drift
+    driftStrength: 0.48,
+    driftSpeed: 0.07,
     shadowStrength: 0.03,
   },
 
+  proximity: {
+    nearbyDistance: 5,
+    facingThreshold: 0.35,
+  },
+
+  rendering: {
+    toneMappingExposure: 0.9,
+  },
+
+  audio: {
+    footstepVolume: 0.9,
+    footstepPlaybackRate: 1.0,
+    movementThreshold: 0.0015,
+    fadeInSpeed: 0.10,
+    fadeOutSpeed: 0.04,
+  },
+
+  music: {
+    volume: 0.22,
+    fadeInDuration: 3.0,
+  },
+
   movement: {
-    moveSpeed: 0.032,
-    lookDistance: 8,
+    moveSpeed: 0.012,
+    lookDistance: 5,
     cameraHeight: 1.6,
     positionDamping: 0.06,
     lookRangeX: 82,
