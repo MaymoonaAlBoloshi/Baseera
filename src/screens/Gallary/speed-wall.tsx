@@ -23,29 +23,40 @@ export const SpeedWall = ({ position, rotation, size }: SpeedWallProps) => {
   });
 
   return (
-    <mesh position={position} rotation={rotation}>
-      <planeGeometry args={[size[0], size[1], 80, 16]} />
+    <group position={position} rotation={rotation}>
+      {/* Base — receives ambient, directional and rectAreaLights */}
+      <mesh>
+        <planeGeometry args={[size[0], size[1]]} />
+        <meshStandardMaterial
+          color="#0d0b09"
+          roughness={1}
+          metalness={0}
+          side={DoubleSide}
+        />
+      </mesh>
 
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={wallVertexShader}
-        fragmentShader={wallFragmentShader}
-        side={DoubleSide}
-        uniforms={{
-          uTime: {
-            value: 0,
-          },
-          uDriftStrength: {
-            value: galleryConfig.walls.driftStrength,
-          },
-          uDriftSpeed: {
-            value: galleryConfig.walls.driftSpeed,
-          },
-          uShadowStrength: {
-            value: galleryConfig.walls.shadowStrength,
-          },
-        }}
-      />
-    </mesh>
+      {/* Diamond lattice overlay — transparent, no lighting */}
+      <mesh>
+        <planeGeometry args={[size[0], size[1]]} />
+        <shaderMaterial
+          ref={materialRef}
+          vertexShader={wallVertexShader}
+          fragmentShader={wallFragmentShader}
+          side={DoubleSide}
+          transparent
+          depthWrite={false}
+          polygonOffset
+          polygonOffsetFactor={-1}
+          polygonOffsetUnits={-4}
+          uniforms={{
+            uTime: { value: 0 },
+            uAspectRatio: { value: size[0] / size[1] },
+            uDriftStrength: { value: galleryConfig.walls.driftStrength },
+            uDriftSpeed: { value: galleryConfig.walls.driftSpeed },
+            uShadowStrength: { value: galleryConfig.walls.shadowStrength },
+          }}
+        />
+      </mesh>
+    </group>
   );
 };

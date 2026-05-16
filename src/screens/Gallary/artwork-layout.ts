@@ -1,10 +1,11 @@
 import { galleryConfig } from "./configs";
-import type { GalleryWallSegment } from "./map-generator";
+import type { GalleryPoint, GalleryWallSegment } from "./map-generator";
 import type { GalleryArtwork } from "./types";
 
 export type PositionedArtwork = {
   artwork: GalleryArtwork;
   wallId: string;
+  normal: GalleryPoint;
   position: [number, number, number];
   rotation: [number, number, number];
 };
@@ -39,24 +40,20 @@ export const createArtworkLayout = (
     const usableLength = length - WALL_PADDING * 2;
 
     const offset =
-      WALL_PADDING +
-      ((index % 3) / 2) * usableLength;
+      WALL_PADDING + ((index % 3) / 2) * usableLength;
 
     const wallX = wall.start.x + directionX * offset;
     const wallZ = wall.start.z + directionZ * offset;
 
-    const positionX =
-      wallX + wall.normal.x * WALL_OFFSET;
+    const positionX = wallX + wall.normal.x * WALL_OFFSET;
+    const positionZ = wallZ + wall.normal.z * WALL_OFFSET;
 
-    const positionZ =
-      wallZ + wall.normal.z * WALL_OFFSET;
-
-    const rotationY =
-      Math.atan2(wall.normal.x, wall.normal.z);
+    const rotationY = Math.atan2(wall.normal.x, wall.normal.z);
 
     return {
       artwork,
       wallId: wall.id,
+      normal: wall.normal,
       position: [
         positionX,
         galleryConfig.artworkLayout.defaultHeight,

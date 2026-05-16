@@ -38,6 +38,13 @@ export const Gallery = () => {
     <main className="relative h-screen w-screen overflow-hidden bg-gallery-background">
       <div ref={canvasWrapperRef} className="h-full w-full">
         <Canvas
+          shadows
+          dpr={[1, 2]}
+          gl={{
+            antialias: true,
+            alpha: false,
+            powerPreference: "high-performance",
+          }}
           camera={{
             position: galleryConfig.camera.position,
             fov: galleryConfig.camera.fov,

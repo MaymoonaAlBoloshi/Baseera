@@ -11,6 +11,15 @@ export const galleryConfig = {
     defaultHeight: 2.2,
   },
 
+artworkLighting: {
+  color: "#ffe6b8",
+  intensity: 1.5,
+  width: 3.2,
+  height: 4.2,
+  offsetFromWall: 1.2,
+  heightOffset: 0.8,
+},
+
   scene: {
     backgroundColor: "var(--color-gallery-background)",
     fogColor: "var(--color-gallery-background)",
@@ -26,8 +35,8 @@ export const galleryConfig = {
   },
 
   walls: {
-    driftStrength: 0.08,
-    driftSpeed: 0.08,
+    driftStrength: 0.48, // wire visibility (fragment) + subtle Z-breathe (vertex)
+    driftSpeed: 0.07,    // slow pattern drift
     shadowStrength: 0.03,
   },
 
