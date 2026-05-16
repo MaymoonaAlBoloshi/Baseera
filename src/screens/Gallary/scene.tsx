@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { GalleryFloor } from "./gallery-floor";
 import { GalleryWall } from "./gallery-wall";
 import { createArtworkLayout } from "./artwork-layout";
@@ -10,26 +12,31 @@ import { ProximityDetector } from "./proximity-detector";
 import type { GalleryArtwork } from "./types";
 
 type GallerySceneProps = {
+  seed: string;
   onSelectArtwork: (artwork: GalleryArtwork) => void;
   onNearbyArtworkChange: (artwork: GalleryArtwork | null) => void;
   isFocusMode: boolean;
 };
 
 export const GalleryScene = ({
+  seed,
   onSelectArtwork,
   onNearbyArtworkChange,
   isFocusMode,
 }: GallerySceneProps) => {
-  const galleryMap = createGalleryMap();
+  const galleryMap = useMemo(() => createGalleryMap(seed), [seed]);
 
-  const artworkLayout = createArtworkLayout(galleryArtworks, galleryMap.walls);
+  const artworkLayout = useMemo(
+    () => createArtworkLayout(galleryArtworks, galleryMap.walls),
+    [galleryMap.walls],
+  );
 
   return (
     <>
       <color attach="background" args={["#050504"]} />
       <fog attach="fog" args={["#050504", 8, 32]} />
 
-      <MovementController isDisabled={isFocusMode} />
+      <MovementController isDisabled={isFocusMode} bounds={galleryMap.bounds} />
 
       <ambientLight intensity={0.45} />
 

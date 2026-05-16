@@ -39,15 +39,6 @@ export const galleryConfig = {
     lookRangeX: 82,
     lookRangeY: 4,
 
-    // Z axis bounds
-    minZ: -39,
-    maxZ: 5,
-
-    // X axis bounds vary by zone (corridor vs gallery room)
-    corridorEntryZ: -17,
-    corridorHalfWidth: 3.5,
-    galleryHalfWidth: 13.5,
-
     lookSensitivityX: 0.0028,
     lookSensitivityY: 0.0018,
     minPitch: -0.7,

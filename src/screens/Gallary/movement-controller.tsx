@@ -3,14 +3,19 @@ import { useEffect, useMemo, useRef } from "react";
 import { Euler, Vector3 } from "three";
 
 import { galleryConfig } from "./configs";
+import type { GalleryBounds } from "./map-generator";
 
 const pressedKeys = new Set<string>();
 
 type MovementControllerProps = {
   isDisabled: boolean;
+  bounds: GalleryBounds;
 };
 
-export const MovementController = ({ isDisabled }: MovementControllerProps) => {
+export const MovementController = ({
+  isDisabled,
+  bounds,
+}: MovementControllerProps) => {
   const { camera, gl } = useThree();
 
   const yaw = useRef(0);
@@ -142,21 +147,24 @@ export const MovementController = ({ isDisabled }: MovementControllerProps) => {
       targetPosition.current.add(movementVector);
     }
 
-    const inCorridor =
-      targetPosition.current.z > galleryConfig.movement.corridorEntryZ;
+    const z = targetPosition.current.z;
 
-    const xLimit = inCorridor
-      ? galleryConfig.movement.corridorHalfWidth
-      : galleryConfig.movement.galleryHalfWidth;
-
-    targetPosition.current.x = Math.max(
-      -xLimit,
-      Math.min(xLimit, targetPosition.current.x),
+    const matchingZones = bounds.zones.filter(
+      (zone) => z >= zone.minZ && z <= zone.maxZ,
     );
 
+    if (matchingZones.length > 0) {
+      const minX = Math.min(...matchingZones.map((zone) => zone.minX));
+      const maxX = Math.max(...matchingZones.map((zone) => zone.maxX));
+      targetPosition.current.x = Math.max(
+        minX,
+        Math.min(maxX, targetPosition.current.x),
+      );
+    }
+
     targetPosition.current.z = Math.max(
-      galleryConfig.movement.minZ,
-      Math.min(galleryConfig.movement.maxZ, targetPosition.current.z),
+      bounds.minZ,
+      Math.min(bounds.maxZ, targetPosition.current.z),
     );
 
     targetPosition.current.y = galleryConfig.movement.cameraHeight;

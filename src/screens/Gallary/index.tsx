@@ -44,6 +44,7 @@ export const Gallery = () => {
           }}
         >
           <GalleryScene
+            seed="oh"
             onSelectArtwork={setSelectedArtwork}
             onNearbyArtworkChange={setNearbyArtwork}
             isFocusMode={Boolean(selectedArtwork)}
