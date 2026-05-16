@@ -6,7 +6,13 @@ import { galleryConfig } from "./configs";
 
 const pressedKeys = new Set<string>();
 
-export const MovementController = () => {
+type MovementControllerProps = {
+  isDisabled: boolean;
+};
+
+export const MovementController = ({
+  isDisabled,
+}: MovementControllerProps) => {
   const { camera, gl } = useThree();
 
   const yaw = useRef(0);
@@ -37,13 +43,28 @@ export const MovementController = () => {
       galleryConfig.movement.cameraHeight,
       galleryConfig.camera.position[2],
     );
+  }, [camera]);
 
+  useEffect(() => {
+    if (isDisabled && document.pointerLockElement === gl.domElement) {
+      document.exitPointerLock();
+    }
+  }, [gl.domElement, isDisabled]);
+
+  useEffect(() => {
     const handleClick = () => {
+      if (isDisabled) {
+        return;
+      }
+
       gl.domElement.requestPointerLock();
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (document.pointerLockElement !== gl.domElement) {
+      if (
+        isDisabled ||
+        document.pointerLockElement !== gl.domElement
+      ) {
         return;
       }
 
@@ -60,6 +81,10 @@ export const MovementController = () => {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (isDisabled) {
+        return;
+      }
+
       pressedKeys.add(event.key.toLowerCase());
     };
 
@@ -79,9 +104,14 @@ export const MovementController = () => {
       window.removeEventListener("keyup", handleKeyUp);
       pressedKeys.clear();
     };
-  }, [camera, gl.domElement]);
+  }, [gl.domElement, isDisabled]);
 
   useFrame(() => {
+    if (isDisabled) {
+      pressedKeys.clear();
+      return;
+    }
+
     cameraRotation.set(pitch.current, yaw.current, 0);
     camera.quaternion.setFromEuler(cameraRotation);
 

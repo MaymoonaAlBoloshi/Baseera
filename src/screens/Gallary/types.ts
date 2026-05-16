@@ -10,3 +10,6 @@ export type GalleryArtwork = {
   distanceZ?: number;
   height?: number;
 };
+
+export type GallerySelectedArtwork = GalleryArtwork | null;
+export type GalleryNearbyArtwork = GalleryArtwork | null;

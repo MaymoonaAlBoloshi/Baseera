@@ -27,4 +27,6 @@ body,
 --color-gallery-text-secondary: #b8b0a4;
 --color-gallery-text-muted: #756f66;
 --color-gallery-border: #2a2722;
+
+--color-gallery-overlay: rgb(5 5 4 / 0.92);
 }
