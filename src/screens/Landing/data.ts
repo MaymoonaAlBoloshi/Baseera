@@ -1,18 +1,22 @@
 export const landingSteps = [
   {
-    text: "Before the gallery opens, take a breath.",
-    buttonLabel: "I’m here",
+    id: "arrival",
+    text: "قبل أن تُفتح الأبواب، خذ لحظة هدوء.",
+    actionLabel: "أنا مستعدة",
   },
   {
-    text: "This is not a wall of images. It is a place for small wonders.",
-    buttonLabel: "Tell me more",
+    id: "invitation",
+    text: "هنا لا تُعرض الأعمال فقط، بل تُروى الحكايات.",
+    actionLabel: "أكملي",
   },
   {
-    text: "Move slowly. Look closely. Let each piece find you.",
-    buttonLabel: "Of course",
+    id: "presence",
+    text: "تمهّل… فبعض الجمال لا يظهر إلا لمن يمنحه وقتًا.",
+    actionLabel: "بالطبع",
   },
   {
-    text: "When you are ready, the doors will open.",
-    buttonLabel: "Let’s go",
+    id: "entry",
+    text: "حين تكون مستعدًا، يبدأ العبور.",
+    actionLabel: "لننطلق",
   },
 ] as const;

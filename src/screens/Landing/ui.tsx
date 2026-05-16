@@ -23,7 +23,7 @@ export const LandingUi = ({
 
         <div className="flex flex-col items-center gap-6">
           <LandingAction
-            label={step.buttonLabel}
+            label={step.actionLabel}
             onClick={onAdvance}
           />
 

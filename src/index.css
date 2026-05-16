@@ -21,4 +21,10 @@ body,
   --color-landing-border: rgba(255, 255, 255, 0.08);
 
   --font-display: "Cormorant Garamond";
+
+  --color-gallery-background: #050504;
+--color-gallery-text-primary: #f4f0e8;
+--color-gallery-text-secondary: #b8b0a4;
+--color-gallery-text-muted: #756f66;
+--color-gallery-border: #2a2722;
 }
