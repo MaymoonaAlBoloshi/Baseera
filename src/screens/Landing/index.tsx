@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { speedGridConfig } from "./configs";
 import { landingSteps } from "./data";
 import { LandingScene } from "./scene";
@@ -15,10 +15,37 @@ export const Landing = ({ onComplete }: LandingProps) => {
   const [language, setLanguage] = useState<Language>("ar");
   const [audioEnabled, setAudioEnabled] = useState(true);
 
+  const musicRef = useRef<HTMLAudioElement | null>(null);
+  const fadeRef = useRef(0);
+
+  // Start music once on mount, clean up only when Landing unmounts
+  useEffect(() => {
+    const audio = new Audio("/audio/music.mp3");
+    audio.loop = true;
+    audio.volume = 0;
+    musicRef.current = audio;
+    audio.play().catch(() => {});
+    let vol = 0;
+    fadeRef.current = window.setInterval(() => {
+      vol = Math.min(vol + 0.012, 0.45);
+      audio.volume = vol;
+      if (vol >= 0.45) clearInterval(fadeRef.current);
+    }, 60);
+    return () => {
+      clearInterval(fadeRef.current);
+      audio.pause();
+      audio.src = "";
+    };
+  }, []);
+
   const currentStep = landingSteps[currentStepIndex];
   const isLastStep = currentStepIndex === landingSteps.length - 1;
 
+  const triggerWallBurst = () =>
+    window.dispatchEvent(new Event("landing-transition"));
+
   const advance = () => {
+    triggerWallBurst();
     if (isLastStep) {
       onComplete({ language, audioEnabled });
     } else {
@@ -27,11 +54,13 @@ export const Landing = ({ onComplete }: LandingProps) => {
   };
 
   const handleSelectLanguage = (lang: Language) => {
+    triggerWallBurst();
     setLanguage(lang);
     setCurrentStepIndex((i) => i + 1);
   };
 
   const handleChoice = (value: boolean) => {
+    triggerWallBurst();
     if (currentStep.id === "audio") setAudioEnabled(value);
     setCurrentStepIndex((i) => i + 1);
   };

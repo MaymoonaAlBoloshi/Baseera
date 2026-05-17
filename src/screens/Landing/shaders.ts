@@ -23,7 +23,7 @@ void main() {
   vec2 aspectUv = vec2(uv.x * uAspectRatio, uv.y);
 
   vec2 driftUv = aspectUv;
-  driftUv.y -= uTime * uDriftSpeed * 0.07;
+  driftUv.x += uTime * uDriftSpeed * 0.07;
 
   vec2 rotUv = vec2(
     (driftUv.x - driftUv.y) * 0.7071,

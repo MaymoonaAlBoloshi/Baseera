@@ -9,6 +9,7 @@ import { FootstepAudio } from "./audio/footstep-audio";
 import { createArtworkLayout } from "./artwork/artwork-layout";
 import { GalleryFloor } from "./environment/gallery-floor";
 import { GalleryWall } from "./environment/gallery-wall";
+import { LightAudience } from "./environment/light-audience";
 import { createGalleryMap } from "./map-generator";
 import { MovementController } from "./controls/movement-controller";
 import { ProximityDetector } from "./artwork/proximity-detector";
@@ -82,6 +83,8 @@ export const GalleryScene = ({
         mobileInputRef={mobileInputRef}
       />
       <FootstepAudio isMuted={isFocusMode || !audioEnabled} />
+
+      <LightAudience artworkPositions={artworkLayout.map((a) => a.position)} />
 
       <ambientLight
         intensity={artistConfig.ambientIntensity * brightness}

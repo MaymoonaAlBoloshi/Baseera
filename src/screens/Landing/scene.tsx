@@ -1,4 +1,5 @@
 import { speedGridConfig } from "./configs";
+import { LightCharacter } from "./light-character";
 import { SpeedWall } from "./speed-wall";
 
 export const LandingScene = () => {
@@ -23,6 +24,8 @@ export const LandingScene = () => {
         position={[walls.distanceFromCenter, 0, walls.depth]}
         rotation={[0, Math.PI / 2, 0]}
       />
+
+      <LightCharacter />
     </>
   );
 };

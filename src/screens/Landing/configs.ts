@@ -20,7 +20,7 @@ export const speedGridConfig = {
   },
 
   drift: {
-    strength: 0.48,
-    speed: 0.07,
+    strength: 0.55,
+    speed: 1.2,
   },
 } satisfies SpeedGridConfig;

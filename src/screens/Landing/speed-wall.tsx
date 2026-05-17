@@ -1,15 +1,43 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { DoubleSide, Vector3, type ShaderMaterial } from "three";
 import { wallFragmentShader, wallVertexShader } from "./shaders";
 import type { SpeedWallProps } from "./types";
 
 export const SpeedWall = ({ position, rotation, config }: SpeedWallProps) => {
   const materialRef = useRef<ShaderMaterial | null>(null);
+  const virtualTimeRef = useRef(0);
+  const lastRealRef = useRef(0);
+  const boostRef = useRef(1);
+  const boostRafRef = useRef(0);
+
+  useEffect(() => {
+    const handleTransition = () => {
+      cancelAnimationFrame(boostRafRef.current);
+      boostRef.current = 9;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min((now - start) / 4000, 1);
+        boostRef.current = 1 + 8 * Math.exp(-t * 5);
+        if (t < 1) boostRafRef.current = requestAnimationFrame(tick);
+        else boostRef.current = 1;
+      };
+      boostRafRef.current = requestAnimationFrame(tick);
+    };
+    window.addEventListener("landing-transition", handleTransition);
+    return () => {
+      window.removeEventListener("landing-transition", handleTransition);
+      cancelAnimationFrame(boostRafRef.current);
+    };
+  }, []);
 
   useFrame((state) => {
+    const real = state.clock.elapsedTime;
+    const delta = real - lastRealRef.current;
+    lastRealRef.current = real;
+    virtualTimeRef.current += delta * boostRef.current;
     if (materialRef.current) {
-      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+      materialRef.current.uniforms.uTime.value = virtualTimeRef.current;
     }
   });
 
