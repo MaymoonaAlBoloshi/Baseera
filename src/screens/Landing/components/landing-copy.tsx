@@ -4,10 +4,7 @@ type LandingCopyProps = {
 
 export const LandingCopy = ({ text }: LandingCopyProps) => {
   return (
-    <p
-      dir="rtl"
-      className="max-w-2xl text-center text-3xl leading-loose tracking-wide text-landing-text-primary md:text-5xl"
-    >
+    <p className="max-w-xl text-center text-xl leading-relaxed tracking-wide text-landing-text-primary font-light">
       {text}
     </p>
   );

@@ -12,7 +12,11 @@ import { galleryArtworks, artistCollections } from "./data";
 
 import type { GalleryArtwork, GalleryView, MobileInputState } from "./types";
 
-export const Gallery = () => {
+export const Gallery = ({
+  audioEnabled = true,
+}: {
+  audioEnabled?: boolean;
+}) => {
   const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const isPortrait = useIsPortrait();
@@ -23,6 +27,8 @@ export const Gallery = () => {
     lookDX: 0,
     lookDY: 0,
   });
+
+  const [brightness, setBrightness] = useState(1);
 
   const [view, setView] = useState<GalleryView>({ mode: "selection" });
 
@@ -136,6 +142,8 @@ export const Gallery = () => {
             onSelectArtwork={handleSelectArtwork}
             onNearbyArtworkChange={setNearbyArtwork}
             isFocusMode={Boolean(selectedArtwork)}
+            audioEnabled={audioEnabled}
+            brightness={brightness}
           />
         </Canvas>
       </div>
@@ -150,6 +158,8 @@ export const Gallery = () => {
         onSupportArtist={handleSupportArtist}
         onCloseArtwork={handleCloseArtwork}
         onBack={handleBack}
+        brightness={brightness}
+        onBrightnessChange={setBrightness}
       />
 
       {isMobile && (
@@ -161,7 +171,7 @@ export const Gallery = () => {
         />
       )}
 
-      <BackgroundMusic />
+      {audioEnabled && <BackgroundMusic />}
 
       {/* Hidden YouTube iframe for proximity audio — lives outside Canvas so
           react-dom's reconciler handles it, not R3F's */}

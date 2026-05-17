@@ -1,89 +1,56 @@
 import { useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
-import * as THREE from "three";
-import {
-  speedGridFragmentShader,
-  speedGridVertexShader,
-} from "./shaders";
+import { useRef } from "react";
+import { DoubleSide, Vector3, type ShaderMaterial } from "three";
+import { wallFragmentShader, wallVertexShader } from "./shaders";
 import type { SpeedWallProps } from "./types";
 
-const cssColorToVector3 = (cssColor: string) => {
-  const color = new THREE.Color(cssColor);
+export const SpeedWall = ({ position, rotation, config }: SpeedWallProps) => {
+  const materialRef = useRef<ShaderMaterial | null>(null);
 
-  return new THREE.Vector3(color.r, color.g, color.b);
-};
-
-export const SpeedWall = ({
-  position,
-  rotation,
-  config,
-}: SpeedWallProps) => {
-  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
-
-  const uniforms = useMemo(() => {
-    return {
-      uTime: { value: 0 },
-
-      uSpeed: {
-        value: config.movement.speed,
-      },
-
-      uDepthDensity: {
-        value: config.movement.depthDensity,
-      },
-
-      uVerticalDensity: {
-        value: config.movement.verticalDensity,
-      },
-
-      uDepthThickness: {
-        value: config.lines.depthThickness,
-      },
-
-      uVerticalThickness: {
-        value: config.lines.verticalThickness,
-      },
-
-      uWireColor: {
-        value: cssColorToVector3(config.colors.wire),
-      },
-
-      uFadePower: {
-        value: config.perspective.fadePower,
-      },
-
-      uGradientStrength: {
-        value: config.gradient.strength,
-      },
-    };
-  }, [config]);
-
-  useFrame(({ clock }) => {
-    if (!materialRef.current) return;
-
-    materialRef.current.uniforms.uTime.value =
-      clock.elapsedTime;
+  useFrame((state) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+    }
   });
 
-  return (
-    <mesh position={position} rotation={rotation}>
-      <planeGeometry
-        args={[
-          config.walls.width,
-          config.walls.height,
-          1,
-          1,
-        ]}
-      />
+  const { width, height } = config.walls;
 
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={speedGridVertexShader}
-        fragmentShader={speedGridFragmentShader}
-        uniforms={uniforms}
-        transparent
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+  return (
+    <group position={position} rotation={rotation}>
+      {/* Base — lit by scene lights */}
+      <mesh>
+        <planeGeometry args={[width, height]} />
+        <meshStandardMaterial
+          color={config.colors.wallBase}
+          roughness={1}
+          metalness={0}
+          side={DoubleSide}
+        />
+      </mesh>
+
+      {/* Diamond lattice overlay */}
+      <mesh>
+        <planeGeometry args={[width, height]} />
+        <shaderMaterial
+          ref={materialRef}
+          vertexShader={wallVertexShader}
+          fragmentShader={wallFragmentShader}
+          side={DoubleSide}
+          transparent
+          depthWrite={false}
+          polygonOffset
+          polygonOffsetFactor={-1}
+          polygonOffsetUnits={-4}
+          uniforms={{
+            uTime: { value: 0 },
+            uAspectRatio: { value: width / height },
+            uWireColor: { value: new Vector3(...config.colors.wallWire) },
+            uDriftStrength: { value: config.drift.strength },
+            uDriftSpeed: { value: config.drift.speed },
+            uShadowStrength: { value: 0.03 },
+          }}
+        />
+      </mesh>
+    </group>
   );
 };

@@ -10,15 +10,13 @@ body,
 }
 
 @theme {
-  --color-landing-background: #0f0f10;
+  --color-landing-background: #050504;
 
-  --color-landing-shader-background: #0f0f10;
-  --color-landing-shader-wire: #6d6d76;
+  --color-landing-text-primary: #f4f0e8;
+  --color-landing-text-secondary: #b8b0a4;
+  --color-landing-text-muted: #756f66;
 
-  --color-landing-text-primary: #d7d7db;
-  --color-landing-text-secondary: #8e8e94;
-
-  --color-landing-border: rgba(255, 255, 255, 0.08);
+  --color-landing-border: #2a2722;
 
   --font-display: "Cormorant Garamond";
 

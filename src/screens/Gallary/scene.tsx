@@ -27,6 +27,8 @@ type GallerySceneProps = {
   onSelectArtwork: (artwork: GalleryArtwork) => void;
   onNearbyArtworkChange: (artwork: GalleryArtwork | null) => void;
   isFocusMode: boolean;
+  audioEnabled: boolean;
+  brightness: number;
 };
 
 export const GalleryScene = ({
@@ -40,6 +42,8 @@ export const GalleryScene = ({
   onSelectArtwork,
   onNearbyArtworkChange,
   isFocusMode,
+  audioEnabled,
+  brightness,
 }: GallerySceneProps) => {
   const galleryMap = useMemo(() => createGalleryMap(seed), [seed]);
 
@@ -77,16 +81,16 @@ export const GalleryScene = ({
         isMobile={isMobile}
         mobileInputRef={mobileInputRef}
       />
-      <FootstepAudio isMuted={isFocusMode} />
+      <FootstepAudio isMuted={isFocusMode || !audioEnabled} />
 
       <ambientLight
-        intensity={artistConfig.ambientIntensity}
+        intensity={artistConfig.ambientIntensity * brightness}
         color={artistConfig.ambientColor}
       />
 
       <directionalLight
         position={[0, 5, 6]}
-        intensity={artistConfig.directionalIntensity}
+        intensity={artistConfig.directionalIntensity * brightness}
         color={artistConfig.directionalColor}
       />
 

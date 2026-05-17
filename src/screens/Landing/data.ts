@@ -1,22 +1,27 @@
-export const landingSteps = [
+import type { LandingStep } from "./types";
+
+export const landingSteps: LandingStep[] = [
   {
-    id: "arrival",
-    text: "قبل أن تُفتح الأبواب، خذ لحظة هدوء.",
-    actionLabel: "أنا مستعدة",
+    kind: "language",
+    id: "language",
   },
   {
-    id: "invitation",
-    text: "هنا لا تُعرض الأعمال فقط، بل تُروى الحكايات.",
-    actionLabel: "أكملي",
+    kind: "choice",
+    id: "audio",
+    text: {
+      ar: "هل تريد تجربة صوتية كاملة؟",
+      en: "Would you like audio?",
+    },
+    yesLabel: { ar: "نعم", en: "Yes" },
+    noLabel: { ar: "لا", en: "No" },
   },
   {
-    id: "presence",
-    text: "تمهّل… فبعض الجمال لا يظهر إلا لمن يمنحه وقتًا.",
-    actionLabel: "بالطبع",
-  },
-  {
+    kind: "text",
     id: "entry",
-    text: "حين تكون مستعدًا، يبدأ العبور.",
-    actionLabel: "لننطلق",
+    text: {
+      ar: "حين تكون مستعدًا، يبدأ العبور.",
+      en: "When you are ready, the crossing begins.",
+    },
+    actionLabel: { ar: "دخول", en: "Enter" },
   },
-] as const;
+];

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { X, Maximize2, Minimize2 } from "lucide-react";
+import { X, Maximize2, Minimize2, Sun } from "lucide-react";
 
 import type { GalleryArtwork } from "./types";
 import { SelectedOverlay } from "./selected-overlay";
@@ -15,6 +15,8 @@ type GalleryUiProps = {
   onSupportArtist: (artistName: string) => void;
   onCloseArtwork: () => Promise<void> | void;
   onBack: () => void;
+  brightness: number;
+  onBrightnessChange: (v: number) => void;
 };
 
 // Shared easing — slow, dreamy, slightly floaty
@@ -30,7 +32,10 @@ export const GalleryUi = ({
   onSupportArtist,
   onCloseArtwork,
   onBack,
+  brightness,
+  onBrightnessChange,
 }: GalleryUiProps) => {
+  const [brightnessOpen, setBrightnessOpen] = useState(false);
   // The artist to display in the persistent HUD (artist mode)
   const displayArtist = currentArtistArtwork?.artist ?? nearbyArtwork?.artist;
 
@@ -83,7 +88,7 @@ export const GalleryUi = ({
 
   return (
     <>
-      {/* ── Fullscreen button (hidden if browser doesn't support it) ── */}
+      {/* ── Fullscreen button ── */}
       {!selectedArtwork && canFullscreen && (
         <button
           type="button"
@@ -99,6 +104,55 @@ export const GalleryUi = ({
             <Maximize2 size={isMobile ? 20 : 16} />
           )}
         </button>
+      )}
+
+      {/* ── Brightness control ── */}
+      {!selectedArtwork && (
+        <div
+          className={`absolute top-8 z-20 ${
+            canFullscreen ? (isMobile ? "right-24" : "right-20") : "right-8"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => setBrightnessOpen((v) => !v)}
+            aria-label="Adjust brightness"
+            className={`flex items-center justify-center border transition ${
+              brightnessOpen
+                ? "border-gallery-text-secondary text-gallery-text-secondary"
+                : "border-gallery-border text-gallery-text-muted hover:border-gallery-text-secondary hover:text-gallery-text-secondary"
+            } ${isMobile ? "w-12 h-12" : "w-9 h-9"}`}
+          >
+            <Sun size={isMobile ? 20 : 16} />
+          </button>
+
+          <AnimatePresence>
+            {brightnessOpen && (
+              <motion.div
+                className="absolute right-0 top-full mt-2 flex flex-col items-center gap-3 border border-gallery-border bg-gallery-background px-3 py-4"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ ease: [0.4, 0, 0.2, 1], duration: 0.2 }}
+              >
+                <input
+                  type="range"
+                  min={0.3}
+                  max={2}
+                  step={0.05}
+                  value={brightness}
+                  onChange={(e) => onBrightnessChange(Number(e.target.value))}
+                  aria-label="Scene brightness"
+                  className="h-24 w-2 cursor-pointer accent-gallery-text-secondary"
+                  style={{ writingMode: "vertical-lr", direction: "rtl" }}
+                />
+                <span className="text-[9px] tracking-[0.15em] text-gallery-text-muted uppercase">
+                  {Math.round(brightness * 100)}%
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       )}
 
       {/* ── Back button — artist mode only ────────── */}

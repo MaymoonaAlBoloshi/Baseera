@@ -1,5 +1,3 @@
-import { landingSteps } from "./data";
-
 export type Vector3Tuple = [number, number, number];
 
 export type SpeedGridConfig = {
@@ -15,28 +13,15 @@ export type SpeedGridConfig = {
     height: number;
   };
 
-  movement: {
-    speed: number;
-    depthDensity: number;
-    verticalDensity: number;
-  };
-
-  lines: {
-    depthThickness: number;
-    verticalThickness: number;
-  };
-
   colors: {
     background: string;
-    wire: string;
+    wallBase: string;
+    wallWire: [number, number, number];
   };
 
-  perspective: {
-    fadePower: number;
-  };
-
-  gradient: {
+  drift: {
     strength: number;
+    speed: number;
   };
 };
 
@@ -46,4 +31,32 @@ export type SpeedWallProps = {
   config: SpeedGridConfig;
 };
 
-export type LandingStep = (typeof landingSteps)[number];
+export type Language = "ar" | "en";
+export type LocalizedString = { ar: string; en: string };
+
+export type TextStep = {
+  kind: "text";
+  id: string;
+  text: LocalizedString;
+  actionLabel: LocalizedString;
+};
+
+export type LanguageStep = {
+  kind: "language";
+  id: string;
+};
+
+export type ChoiceStep = {
+  kind: "choice";
+  id: string;
+  text: LocalizedString;
+  yesLabel: LocalizedString;
+  noLabel: LocalizedString;
+};
+
+export type LandingStep = TextStep | LanguageStep | ChoiceStep;
+
+export type OnboardingResult = {
+  language: Language;
+  audioEnabled: boolean;
+};
