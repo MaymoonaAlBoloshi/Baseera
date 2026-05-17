@@ -3,8 +3,8 @@ import { useRef } from "react";
 import { Vector3 } from "three";
 
 import type { PositionedArtwork } from "./artwork-layout";
-import { galleryConfig } from "./configs";
-import type { GalleryArtwork } from "./types";
+import { galleryConfig } from "../configs";
+import type { GalleryArtwork } from "../types";
 
 type ProximityDetectorProps = {
   artworks: PositionedArtwork[];

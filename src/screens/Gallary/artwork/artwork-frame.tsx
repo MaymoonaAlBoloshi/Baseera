@@ -2,7 +2,7 @@ import { useTexture } from "@react-three/drei";
 import type { ThreeEvent } from "@react-three/fiber";
 import { SRGBColorSpace } from "three";
 
-import type { GalleryArtwork } from "./types";
+import type { GalleryArtwork } from "../types";
 
 type ArtworkFrameProps = {
   artwork: GalleryArtwork;

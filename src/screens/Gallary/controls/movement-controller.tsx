@@ -3,9 +3,9 @@ import { useEffect, useMemo, useRef } from "react";
 import { Euler, Vector3 } from "three";
 import type { MutableRefObject } from "react";
 
-import { galleryConfig } from "./configs";
-import type { GalleryBounds } from "./map-generator";
-import type { MobileInputState } from "./types";
+import { galleryConfig } from "../configs";
+import type { GalleryBounds } from "../map-generator";
+import type { MobileInputState } from "../types";
 
 const pressedKeys = new Set<string>();
 
@@ -149,8 +149,17 @@ export const MovementController = ({
 
     if (isMobile) {
       const { moveX, moveZ } = mobileInputRef.current;
-      if (moveX !== 0) movementVector.addScaledVector(rightDirection, moveX);
-      if (moveZ !== 0) movementVector.addScaledVector(forwardDirection, -moveZ);
+      const mag = Math.sqrt(moveX * moveX + moveZ * moveZ);
+      if (mag > 0.01) {
+        // Use joystick magnitude for variable speed (gentle push = slow walk)
+        movementVector.addScaledVector(rightDirection, moveX / mag);
+        movementVector.addScaledVector(forwardDirection, -moveZ / mag);
+        movementVector.multiplyScalar(
+          galleryConfig.movement.mobileMoveSpeed * Math.min(mag, 1),
+        );
+        targetPosition.current.add(movementVector);
+        movementVector.set(0, 0, 0); // prevent the shared block from double-applying
+      }
     } else {
       if (pressedKeys.has("w") || pressedKeys.has("arrowup")) {
         movementVector.add(forwardDirection);

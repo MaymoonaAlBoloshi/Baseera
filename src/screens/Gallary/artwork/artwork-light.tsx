@@ -3,8 +3,8 @@ import { RectAreaLight, Vector3 } from "three";
 import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLightUniformsLib.js";
 import { useFrame, useThree } from "@react-three/fiber";
 
-import { galleryConfig } from "./configs";
-import type { GalleryPoint } from "./map-generator";
+import { galleryConfig } from "../configs";
+import type { GalleryPoint } from "../map-generator";
 
 type ArtworkLightProps = {
   position: [number, number, number];

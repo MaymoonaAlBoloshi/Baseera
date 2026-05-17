@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import type { ArtistGalleryConfig } from "./configs";
-import type { GalleryWallSegment } from "./map-generator";
+import type { ArtistGalleryConfig } from "../configs";
+import type { GalleryWallSegment } from "../map-generator";
 import { SpeedWall } from "./speed-wall";
 
 type GalleryWallProps = {

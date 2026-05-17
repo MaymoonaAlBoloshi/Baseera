@@ -1,16 +1,17 @@
 import { useMemo } from "react";
 import type { MutableRefObject } from "react";
 
-import { ArtworkFrame } from "./artwork-frame";
-import { ArtworkLight } from "./artwork-light";
+import { ArtworkFrame } from "./artwork/artwork-frame";
+import { ArtworkLight } from "./artwork/artwork-light";
+import { GalleryScreen } from "./environment/gallery-screen";
 import { RenderSettings } from "./render-settings";
-import { FootstepAudio } from "./footstep-audio";
-import { createArtworkLayout } from "./artwork-layout";
-import { GalleryFloor } from "./gallery-floor";
-import { GalleryWall } from "./gallery-wall";
+import { FootstepAudio } from "./audio/footstep-audio";
+import { createArtworkLayout } from "./artwork/artwork-layout";
+import { GalleryFloor } from "./environment/gallery-floor";
+import { GalleryWall } from "./environment/gallery-wall";
 import { createGalleryMap } from "./map-generator";
-import { MovementController } from "./movement-controller";
-import { ProximityDetector } from "./proximity-detector";
+import { MovementController } from "./controls/movement-controller";
+import { ProximityDetector } from "./artwork/proximity-detector";
 
 import type { ArtistGalleryConfig } from "./configs";
 import type { GalleryArtwork, MobileInputState } from "./types";
@@ -21,6 +22,8 @@ type GallerySceneProps = {
   artistConfig: ArtistGalleryConfig;
   isMobile: boolean;
   mobileInputRef: MutableRefObject<MobileInputState>;
+  showScreen: boolean;
+  audioIframeRef: MutableRefObject<HTMLIFrameElement | null>;
   onSelectArtwork: (artwork: GalleryArtwork) => void;
   onNearbyArtworkChange: (artwork: GalleryArtwork | null) => void;
   isFocusMode: boolean;
@@ -32,15 +35,27 @@ export const GalleryScene = ({
   artistConfig,
   isMobile,
   mobileInputRef,
+  showScreen,
+  audioIframeRef,
   onSelectArtwork,
   onNearbyArtworkChange,
   isFocusMode,
 }: GallerySceneProps) => {
   const galleryMap = useMemo(() => createGalleryMap(seed), [seed]);
 
+  // When the back-wall installation is visible, exclude the back wall from
+  // artwork placement so nothing hangs behind the radio plinth.
+  const layoutWalls = useMemo(
+    () =>
+      showScreen
+        ? galleryMap.walls.filter((w) => w.id !== "gallery-back")
+        : galleryMap.walls,
+    [galleryMap.walls, showScreen],
+  );
+
   const artworkLayout = useMemo(
-    () => createArtworkLayout(artworks, galleryMap.walls),
-    [artworks, galleryMap.walls],
+    () => createArtworkLayout(artworks, layoutWalls),
+    [artworks, layoutWalls],
   );
 
   return (
@@ -110,6 +125,13 @@ export const GalleryScene = ({
           onSelect={onSelectArtwork}
         />
       ))}
+
+      {showScreen && (
+        <GalleryScreen
+          backWallZ={galleryMap.backWallZ}
+          iframeRef={audioIframeRef}
+        />
+      )}
     </>
   );
 };

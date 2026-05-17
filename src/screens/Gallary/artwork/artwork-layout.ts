@@ -1,6 +1,6 @@
-import { galleryConfig } from "./configs";
-import type { GalleryPoint, GalleryWallSegment } from "./map-generator";
-import type { GalleryArtwork } from "./types";
+import { galleryConfig } from "../configs";
+import type { GalleryPoint, GalleryWallSegment } from "../map-generator";
+import type { GalleryArtwork } from "../types";
 
 export type PositionedArtwork = {
   artwork: GalleryArtwork;

@@ -20,12 +20,12 @@ export type ArtistGalleryConfig = {
 export const defaultArtistConfig: ArtistGalleryConfig = {
   fogColor: "#050504",
   fogNear: 8,
-  fogFar: 32,
+  fogFar: 44,
   backgroundColor: "#050504",
-  ambientIntensity: 0.08,
+  ambientIntensity: 0.20,
   ambientColor: "#ffffff",
   directionalColor: "#f4f0e8",
-  directionalIntensity: 0.8,
+  directionalIntensity: 1.1,
   wallBaseColor: "#0d0b09",
   wallWireColor: [0.13, 0.115, 0.098],
   floorBaseColor: "#0d0b09",
@@ -51,7 +51,7 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
   "ashen-field": {
     fogColor: "#060810",
     fogNear: 6,
-    fogFar: 22,
+    fogFar: 30,
     backgroundColor: "#060810",
     wallBaseColor: "#090c12",
     wallWireColor: [0.08, 0.09, 0.13],
@@ -60,14 +60,14 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
     artworkLightColor: "#cce0ff",
     ambientColor: "#c0d0ff",
     directionalColor: "#d8e8ff",
-    directionalIntensity: 0.6,
+    directionalIntensity: 0.85,
   },
 
   // Tariq Henson — deep violet, psychological weight
   "mirror-weight": {
     fogColor: "#07050f",
     fogNear: 7,
-    fogFar: 28,
+    fogFar: 38,
     backgroundColor: "#07050f",
     wallBaseColor: "#0d0a12",
     wallWireColor: [0.11, 0.07, 0.16],
@@ -75,9 +75,9 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
     ceilingBaseColor: "#060410",
     artworkLightColor: "#ddc8ff",
     ambientColor: "#c0a0ff",
-    ambientIntensity: 0.06,
+    ambientIntensity: 0.15,
     directionalColor: "#e0d0ff",
-    directionalIntensity: 0.7,
+    directionalIntensity: 0.95,
     driftStrength: 0.52,
   },
 
@@ -85,7 +85,7 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
   "blue-departure": {
     fogColor: "#030d0c",
     fogNear: 7,
-    fogFar: 26,
+    fogFar: 36,
     backgroundColor: "#030d0c",
     wallBaseColor: "#060f0e",
     wallWireColor: [0.06, 0.12, 0.11],
@@ -93,9 +93,9 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
     ceilingBaseColor: "#040c0a",
     artworkLightColor: "#90ffda",
     ambientColor: "#90ffcc",
-    ambientIntensity: 0.06,
+    ambientIntensity: 0.15,
     directionalColor: "#c0fff0",
-    directionalIntensity: 0.65,
+    directionalIntensity: 0.90,
   },
 
   // Selin Çelik — dusty rose/burgundy, intimate & warm
@@ -117,7 +117,7 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
   "orbit-of-grief": {
     fogColor: "#050508",
     fogNear: 5,
-    fogFar: 20,
+    fogFar: 30,
     backgroundColor: "#050508",
     wallBaseColor: "#0a0a0e",
     wallWireColor: [0.14, 0.14, 0.17],
@@ -125,9 +125,9 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
     ceilingBaseColor: "#060609",
     artworkLightColor: "#e8eeff",
     ambientColor: "#d8deff",
-    ambientIntensity: 0.12,
+    ambientIntensity: 0.18,
     directionalColor: "#e0e4ff",
-    directionalIntensity: 1.0,
+    directionalIntensity: 1.2,
     driftStrength: 0.3,
     driftSpeed: 0.05,
   },
@@ -154,7 +154,7 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
   "threshold-song": {
     fogColor: "#030c0d",
     fogNear: 5,
-    fogFar: 22,
+    fogFar: 32,
     backgroundColor: "#030c0d",
     wallBaseColor: "#050f10",
     wallWireColor: [0.05, 0.16, 0.17],
@@ -162,9 +162,9 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
     ceilingBaseColor: "#030b0c",
     artworkLightColor: "#7affff",
     ambientColor: "#60ffee",
-    ambientIntensity: 0.07,
+    ambientIntensity: 0.16,
     directionalColor: "#b0ffff",
-    directionalIntensity: 0.65,
+    directionalIntensity: 0.90,
     driftStrength: 0.6,
     driftSpeed: 0.10,
   },
@@ -173,7 +173,7 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
   "still-water-hour": {
     fogColor: "#030409",
     fogNear: 7,
-    fogFar: 28,
+    fogFar: 38,
     backgroundColor: "#030409",
     wallBaseColor: "#080a12",
     wallWireColor: [0.07, 0.08, 0.16],
@@ -181,9 +181,9 @@ const artistGalleryConfigs: Record<string, Partial<ArtistGalleryConfig>> = {
     ceilingBaseColor: "#04060e",
     artworkLightColor: "#b0ccff",
     ambientColor: "#8aaaff",
-    ambientIntensity: 0.06,
+    ambientIntensity: 0.15,
     directionalColor: "#c0d4ff",
-    directionalIntensity: 0.7,
+    directionalIntensity: 0.95,
     driftStrength: 0.45,
     driftSpeed: 0.06,
   },
@@ -244,7 +244,7 @@ export const galleryConfig = {
   },
 
   rendering: {
-    toneMappingExposure: 0.9,
+    toneMappingExposure: 1.1,
   },
 
   audio: {
@@ -260,8 +260,22 @@ export const galleryConfig = {
     fadeInDuration: 3.0,
   },
 
+  /** The video installation on the back wall of the selection gallery */
+  galleryScreen: {
+    videoId: "PGKCrnpHcWY",
+    /** Additional video IDs to queue after the first (loops the whole list) */
+    playlistIds: ["PGKCrnpHcWY", "EJoE5hMmCzo"],
+    /** Units in front of the back wall */
+    wallOffset: 0.25,
+    /** Vertical centre of the screen (Three.js Y) */
+    screenY: 2.6,
+    proximityMaxDistance: 22,
+    proximityMinDistance: 4,
+  },
+
   movement: {
     moveSpeed: 0.012,
+    mobileMoveSpeed: 0.026,
     lookDistance: 5,
     cameraHeight: 1.6,
     positionDamping: 0.06,

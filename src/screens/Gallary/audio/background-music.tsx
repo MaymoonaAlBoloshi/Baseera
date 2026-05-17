@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { galleryConfig } from "./configs";
+import { galleryConfig } from "../configs";
 
 export const BackgroundMusic = () => {
   useEffect(() => {

@@ -36,6 +36,9 @@ export type GalleryMap = {
   walls: GalleryWallSegment[];
   floors: GalleryFloorSegment[];
   bounds: GalleryBounds;
+  /** Z of the back wall (player faces this when deep in the gallery) */
+  backWallZ: number;
+  wallHeight: number;
 };
 
 // ─── Seeded PRNG ────────────────────────────────────────────────────────────
@@ -208,5 +211,5 @@ export const createGalleryMap = (seed: string): GalleryMap => {
     maxZ: corridorStartZ - 1,
   };
 
-  return { seed, floors, walls, bounds };
+  return { seed, floors, walls, bounds, backWallZ: galleryEndZ, wallHeight };
 };

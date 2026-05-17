@@ -2,8 +2,8 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import type { ShaderMaterial } from "three";
 
-import type { ArtistGalleryConfig } from "./configs";
-import type { GalleryFloorSegment } from "./map-generator";
+import type { ArtistGalleryConfig } from "../configs";
+import type { GalleryFloorSegment } from "../map-generator";
 import {
   ceilingFragmentShader,
   ceilingVertexShader,

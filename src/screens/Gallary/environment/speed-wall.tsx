@@ -2,7 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { DoubleSide, type ShaderMaterial } from "three";
 
-import { galleryConfig } from "./configs";
+import { galleryConfig } from "../configs";
 import { wallFragmentShader, wallVertexShader } from "./shaders";
 
 type SpeedWallProps = {

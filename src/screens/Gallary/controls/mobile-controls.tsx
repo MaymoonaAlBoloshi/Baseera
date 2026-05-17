@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
 
-import type { MobileInputState } from "./types";
+import type { MobileInputState } from "../types";
 
 type MobileControlsProps = {
   inputRef: MutableRefObject<MobileInputState>;
@@ -32,6 +32,7 @@ export const MobileControls = ({
 
   // Track which touch IDs belong to joystick vs look
   const joystickTouchId = useRef<number | null>(null);
+  const joystickBaseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const lookTouchId = useRef<number | null>(null);
   const lookLastPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -55,6 +56,7 @@ export const MobileControls = ({
           // Left zone → joystick
           if (joystickTouchId.current === null) {
             joystickTouchId.current = t.identifier;
+            joystickBaseRef.current = { x: t.clientX, y: t.clientY };
             setJoystick({
               baseX: t.clientX,
               baseY: t.clientY,
@@ -80,23 +82,22 @@ export const MobileControls = ({
         const t = e.changedTouches[i];
 
         if (t.identifier === joystickTouchId.current) {
-          setJoystick((j) => {
-            const rawDX = t.clientX - j.baseX;
-            const rawDY = t.clientY - j.baseY;
-            const dist = Math.sqrt(rawDX * rawDX + rawDY * rawDY);
-            const clamp = Math.min(dist, JOYSTICK_MAX_RADIUS);
-            const angle = Math.atan2(rawDY, rawDX);
+          const base = joystickBaseRef.current;
+          const rawDX = t.clientX - base.x;
+          const rawDY = t.clientY - base.y;
+          const dist = Math.sqrt(rawDX * rawDX + rawDY * rawDY);
+          const clamp = Math.min(dist, JOYSTICK_MAX_RADIUS);
+          const angle = Math.atan2(rawDY, rawDX);
 
-            const knobX = j.baseX + Math.cos(angle) * clamp;
-            const knobY = j.baseY + Math.sin(angle) * clamp;
+          const knobX = base.x + Math.cos(angle) * clamp;
+          const knobY = base.y + Math.sin(angle) * clamp;
 
-            // Normalise to -1..1
-            const norm = clamp / JOYSTICK_MAX_RADIUS;
-            inputRef.current.moveX = Math.cos(angle) * norm;
-            inputRef.current.moveZ = Math.sin(angle) * norm;
+          // Normalise to -1..1 and write synchronously (not inside updater)
+          const norm = clamp / JOYSTICK_MAX_RADIUS;
+          inputRef.current.moveX = Math.cos(angle) * norm;
+          inputRef.current.moveZ = Math.sin(angle) * norm;
 
-            return { ...j, knobX, knobY };
-          });
+          setJoystick((j) => ({ ...j, knobX, knobY }));
         }
 
         if (t.identifier === lookTouchId.current) {
