@@ -3,14 +3,14 @@ import type { SpeedGridConfig } from "./types";
 export const speedGridConfig = {
   camera: {
     position: [0, 1.2, 6],
-    fov: 55,
+    fov: 68,
   },
 
   walls: {
-    distanceFromCenter: 5,
+    distanceFromCenter: 4,
     depth: -30,
     width: 80,
-    height: 14,
+    height: 18,
   },
 
   colors: {

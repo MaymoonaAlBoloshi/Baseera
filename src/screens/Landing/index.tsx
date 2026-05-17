@@ -31,8 +31,24 @@ export const Landing = ({ onComplete }: LandingProps) => {
       audio.volume = vol;
       if (vol >= 0.45) clearInterval(fadeRef.current);
     }, 60);
+
+    // Fade out when App signals we're transitioning to gallery
+    const handleExit = () => {
+      clearInterval(fadeRef.current);
+      const startVol = audio.volume;
+      const steps = 40;
+      let step = 0;
+      const out = window.setInterval(() => {
+        step++;
+        audio.volume = Math.max(0, startVol * (1 - step / steps));
+        if (step >= steps) clearInterval(out);
+      }, 22); // ~880 ms total
+    };
+    window.addEventListener("landing-exit", handleExit);
+
     return () => {
       clearInterval(fadeRef.current);
+      window.removeEventListener("landing-exit", handleExit);
       audio.pause();
       audio.src = "";
     };
@@ -87,6 +103,15 @@ export const Landing = ({ onComplete }: LandingProps) => {
         onAdvance={advance}
         onSelectLanguage={handleSelectLanguage}
         onChoice={handleChoice}
+      />
+
+      {/* Cinematic vignette */}
+      <div
+        className="pointer-events-none absolute inset-0 z-20"
+        style={{
+          background:
+            "radial-gradient(ellipse 75% 70% at 50% 50%, transparent 30%, rgba(5,5,4,0.55) 70%, rgba(5,5,4,0.92) 100%)",
+        }}
       />
     </main>
   );

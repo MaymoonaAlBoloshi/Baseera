@@ -257,7 +257,7 @@ export const galleryConfig = {
 
   music: {
     volume: 0.22,
-    fadeInDuration: 3.0,
+    fadeInDuration: 6.0,
   },
 
   /** The video installation on the back wall of the selection gallery */

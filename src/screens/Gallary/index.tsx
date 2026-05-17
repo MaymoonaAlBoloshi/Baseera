@@ -171,7 +171,7 @@ export const Gallery = ({
         />
       )}
 
-      {audioEnabled && <BackgroundMusic />}
+      {audioEnabled && <BackgroundMusic autoStart />}
 
       {/* Hidden YouTube iframe for proximity audio — lives outside Canvas so
           react-dom's reconciler handles it, not R3F's */}

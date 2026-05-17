@@ -2,7 +2,11 @@ import { useEffect } from "react";
 
 import { galleryConfig } from "../configs";
 
-export const BackgroundMusic = () => {
+export const BackgroundMusic = ({
+  autoStart = false,
+}: {
+  autoStart?: boolean;
+}) => {
   useEffect(() => {
     let ctx: AudioContext;
 
@@ -18,7 +22,7 @@ export const BackgroundMusic = () => {
 
     let source: AudioBufferSourceNode | null = null;
     let buffer: AudioBuffer | null = null;
-    let gestureReceived = false;
+    let gestureReceived = autoStart; // skip gesture wait when coming from landing
 
     const tryStart = () => {
       if (!buffer || !gestureReceived || source) return;

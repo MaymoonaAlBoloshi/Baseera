@@ -2,6 +2,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import type { MutableRefObject } from "react";
 import * as THREE from "three";
+import { useGLTF } from "@react-three/drei";
 
 import { galleryConfig } from "../configs";
 
@@ -15,6 +16,7 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
   const spotRef = useRef<THREE.SpotLight>(null);
   const targetRef = useRef<THREE.Object3D>(null);
   const lastVol = useRef(-1);
+  const { scene: radioScene } = useGLTF("/models/player.glb");
 
   const cfg = galleryConfig.galleryScreen;
   const posZ = backWallZ + cfg.wallOffset;
@@ -99,94 +101,8 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
           />
         </mesh>
 
-        {/* ── Radio body ── */}
-        <mesh position={[0, 1.19, 0]} castShadow>
-          <boxGeometry args={[0.78, 0.44, 0.34]} />
-          <meshStandardMaterial
-            color="#2c2318"
-            roughness={0.75}
-            metalness={0.08}
-          />
-        </mesh>
-
-        {/* Speaker grille (left 55% of front face) */}
-        <mesh position={[-0.14, 1.19, 0.172]}>
-          <boxGeometry args={[0.42, 0.32, 0.01]} />
-          <meshStandardMaterial
-            color="#1a1208"
-            roughness={0.9}
-            metalness={0.05}
-            wireframe
-          />
-        </mesh>
-        {/* Speaker grille backing */}
-        <mesh position={[-0.14, 1.19, 0.168]}>
-          <boxGeometry args={[0.42, 0.32, 0.005]} />
-          <meshStandardMaterial color="#100e08" roughness={1} />
-        </mesh>
-
-        {/* Volume knob */}
-        <mesh
-          position={[0.24, 1.24, 0.175]}
-          rotation={[Math.PI / 2, 0, 0]}
-          castShadow
-        >
-          <cylinderGeometry args={[0.038, 0.038, 0.02, 14]} />
-          <meshStandardMaterial
-            color="#1a1a1a"
-            metalness={0.8}
-            roughness={0.3}
-          />
-        </mesh>
-        {/* Knob indicator line */}
-        <mesh position={[0.24, 1.274, 0.175]} rotation={[Math.PI / 2, 0, 0]}>
-          <boxGeometry args={[0.004, 0.028, 0.001]} />
-          <meshStandardMaterial color="#c8b07a" />
-        </mesh>
-
-        {/* Tuning knob (slightly larger) */}
-        <mesh
-          position={[0.24, 1.13, 0.175]}
-          rotation={[Math.PI / 2, 0, 0]}
-          castShadow
-        >
-          <cylinderGeometry args={[0.05, 0.05, 0.02, 14]} />
-          <meshStandardMaterial
-            color="#1a1a1a"
-            metalness={0.8}
-            roughness={0.3}
-          />
-        </mesh>
-
-        {/* Tuning dial strip */}
-        <mesh position={[0, 1.3, 0.172]}>
-          <boxGeometry args={[0.36, 0.04, 0.004]} />
-          <meshStandardMaterial color="#e8d89a" roughness={0.5} />
-        </mesh>
-
-        {/* LED indicator (warm amber glow) */}
-        <mesh position={[0.24, 1.19, 0.176]}>
-          <sphereGeometry args={[0.014, 8, 8]} />
-          <meshStandardMaterial
-            color="#ff9900"
-            emissive="#ff6600"
-            emissiveIntensity={1.5}
-          />
-        </mesh>
-
-        {/* Antenna — angled back from right-rear top */}
-        <mesh
-          position={[0.32, 1.72, -0.06]}
-          rotation={[0.22, 0, 0.12]}
-          castShadow
-        >
-          <cylinderGeometry args={[0.006, 0.003, 1.0, 6]} />
-          <meshStandardMaterial
-            color="#3a3028"
-            metalness={0.7}
-            roughness={0.35}
-          />
-        </mesh>
+        {/* ── Radio model ── */}
+        <primitive object={radioScene} position={[0, 0.96, 0]} scale={1} />
 
         {/* ── Spotlight ── */}
         <spotLight
@@ -214,3 +130,5 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
     </>
   );
 };
+
+useGLTF.preload("/models/player.glb");

@@ -48,14 +48,25 @@ const WanderingOrb = ({
   );
   const dwellLeft = useRef(0);
   const dwelling = useRef(false);
+  const { camera } = useThree();
 
   useFrame((state) => {
     if (!ref.current) return;
     const t = state.clock.elapsedTime;
     const wp = waypoints[idx.current];
 
+    // Curiosity: how close is the player?
+    const px = camera.position.x - ref.current.position.x;
+    const pz = camera.position.z - ref.current.position.z;
+    const playerDist = Math.sqrt(px * px + pz * pz);
+    const nearFactor = Math.max(0, 1 - playerDist / 4); // 1 at 0 m, 0 at 4 m
+
     if (dwelling.current) {
-      // Stay at waypoint — gentle bob only
+      // While dwelling, drift slightly toward the player when nearby
+      if (nearFactor > 0) {
+        ref.current.position.x += px * nearFactor * 0.002;
+        ref.current.position.z += pz * nearFactor * 0.002;
+      }
       ref.current.position.y =
         wp.pos[1] + Math.sin(t * 0.45 + startIndex) * 0.08;
       dwellLeft.current -= 1;
@@ -66,13 +77,16 @@ const WanderingOrb = ({
       return;
     }
 
+    // Slow down near the player
+    const effectiveSpeed = speed * (1 - nearFactor * 0.6);
+
     // Glide toward current waypoint
     tgt.current.set(
       wp.pos[0],
       wp.pos[1] + Math.sin(t * 0.45 + startIndex) * 0.08,
       wp.pos[2],
     );
-    ref.current.position.lerp(tgt.current, speed);
+    ref.current.position.lerp(tgt.current, effectiveSpeed);
 
     // Arrive check
     const dx = ref.current.position.x - wp.pos[0];

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { X, Maximize2, Minimize2, Sun } from "lucide-react";
+import { Maximize2, Minimize2, Sun } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import type { GalleryArtwork } from "./types";
 import { SelectedOverlay } from "./selected-overlay";
@@ -36,6 +37,7 @@ export const GalleryUi = ({
   onBrightnessChange,
 }: GalleryUiProps) => {
   const [brightnessOpen, setBrightnessOpen] = useState(false);
+  const { t } = useTranslation();
   // The artist to display in the persistent HUD (artist mode)
   const displayArtist = currentArtistArtwork?.artist ?? nearbyArtwork?.artist;
 
@@ -172,7 +174,7 @@ export const GalleryUi = ({
             exit={{ opacity: 0, x: -8 }}
             transition={dream}
           >
-            ← All Artists
+            {t("ui.allArtists")}
           </motion.button>
         )}
       </AnimatePresence>
@@ -189,13 +191,13 @@ export const GalleryUi = ({
             transition={dream}
           >
             <p className="text-[10px] tracking-[0.4em] text-gallery-text-muted uppercase mb-2">
-              Virtual Gallery
+              {t("ui.virtualGallery")}
             </p>
             <p className="text-3xl font-light text-gallery-text-primary">
-              Baseera
+              {t("ui.galleryName")}
             </p>
             <p className="mt-1.5 text-xs text-gallery-text-secondary">
-              A gallery for independent artists
+              {t("ui.tagline")}
             </p>
             <div className="mt-4 flex gap-5">
               <div>
@@ -203,7 +205,7 @@ export const GalleryUi = ({
                   9
                 </p>
                 <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
-                  Artists
+                  {t("ui.artists")}
                 </p>
               </div>
               <div className="w-px bg-gallery-border" />
@@ -212,7 +214,7 @@ export const GalleryUi = ({
                   36
                 </p>
                 <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
-                  Works
+                  {t("ui.works")}
                 </p>
               </div>
             </div>
@@ -229,7 +231,9 @@ export const GalleryUi = ({
             transition={dream}
           >
             <p className="text-[10px] tracking-[0.35em] text-gallery-text-muted uppercase mb-2">
-              {displayArtist.style}
+              {t(`artists.${displayArtist.name}.style`, {
+                defaultValue: displayArtist.style,
+              })}
             </p>
             <p className="text-3xl font-light text-gallery-text-primary">
               {displayArtist.name}
@@ -240,7 +244,7 @@ export const GalleryUi = ({
                   {displayArtist.followers}
                 </p>
                 <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
-                  Followers
+                  {t("ui.followers")}
                 </p>
               </div>
               <div className="w-px bg-gallery-border" />
@@ -249,7 +253,7 @@ export const GalleryUi = ({
                   {displayArtist.supporters}
                 </p>
                 <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
-                  Supporters
+                  {t("ui.supporters")}
                 </p>
               </div>
               <div className="w-px bg-gallery-border" />
@@ -258,7 +262,7 @@ export const GalleryUi = ({
                   {displayArtist.visitors}
                 </p>
                 <p className="text-[10px] tracking-[0.25em] text-gallery-text-muted uppercase mt-0.5">
-                  Visitors
+                  {t("ui.visitors")}
                 </p>
               </div>
             </div>
@@ -278,10 +282,14 @@ export const GalleryUi = ({
             transition={dream}
           >
             <p className="text-sm font-light text-gallery-text-primary">
-              {nearbyArtwork.title}
+              {t(`artworks.${nearbyArtwork.id}.title`, {
+                defaultValue: nearbyArtwork.title,
+              })}
             </p>
             <p className="mt-1 text-xs text-gallery-text-muted">
-              {mode === "selection" ? "Click to enter" : "Click to view"}
+              {mode === "selection"
+                ? t("ui.clickToEnter")
+                : t("ui.clickToView")}
             </p>
           </motion.div>
         )}

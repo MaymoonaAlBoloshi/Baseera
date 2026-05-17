@@ -7,6 +7,7 @@ import {
   MessageSquare,
   X,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import type { GalleryArtwork } from "./types";
 
@@ -29,6 +30,18 @@ export const SelectedOverlay = ({
   const [comment, setComment] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
   const [supportAmount, setSupportAmount] = useState(5);
+
+  const { t } = useTranslation();
+  const title = t(`artworks.${artwork.id}.title`, {
+    defaultValue: artwork.title,
+  });
+  const subtitle = t(`artworks.${artwork.id}.subtitle`, {
+    defaultValue: artwork.subtitle,
+  });
+  const poem = t(`artworks.${artwork.id}.poem`, { defaultValue: artwork.poem });
+  const medium = t(`artworks.${artwork.id}.medium`, {
+    defaultValue: artwork.medium,
+  });
 
   const supported = supportedArtists.has(artwork.artist.name);
 
@@ -72,7 +85,7 @@ export const SelectedOverlay = ({
         <div className="flex items-center justify-center">
           <img
             src={artwork.imageSrc}
-            alt={artwork.title}
+            alt={title}
             className="max-h-[40vh] max-w-full rounded-sm object-contain sm:max-h-[80vh]"
           />
         </div>
@@ -82,10 +95,10 @@ export const SelectedOverlay = ({
           {/* Header */}
           <div>
             <h2 className="text-2xl font-light text-gallery-text-primary leading-snug">
-              {artwork.title}
+              {title}
             </h2>
             <p className="mt-1 text-xs leading-5 text-gallery-text-muted">
-              {artwork.subtitle}
+              {subtitle}
             </p>
           </div>
 
@@ -93,7 +106,7 @@ export const SelectedOverlay = ({
           <div className="border-t border-gallery-border pt-4 space-y-1.5">
             <div className="flex justify-between">
               <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
-                Year
+                {t("ui.year")}
               </span>
               <span className="text-[11px] text-gallery-text-secondary">
                 {artwork.year}
@@ -101,15 +114,15 @@ export const SelectedOverlay = ({
             </div>
             <div className="flex justify-between">
               <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
-                Medium
+                {t("ui.medium")}
               </span>
               <span className="text-[11px] text-gallery-text-secondary text-right max-w-[58%]">
-                {artwork.medium}
+                {medium}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
-                Size
+                {t("ui.size")}
               </span>
               <span className="text-[10px] text-gallery-text-muted">
                 {artwork.dimensions}
@@ -119,7 +132,7 @@ export const SelectedOverlay = ({
 
           {/* Poem */}
           <p className="whitespace-pre-line text-sm font-light leading-7 text-gallery-text-primary border-l border-gallery-border pl-3">
-            {artwork.poem}
+            {poem}
           </p>
 
           {/* Likes + comments counts */}
@@ -139,21 +152,21 @@ export const SelectedOverlay = ({
             <div className="flex gap-2">
               <ActionIconBtn
                 icon={<Heart size={13} />}
-                label="Love"
+                label={t("ui.love")}
                 active={loved}
                 activeClass="text-rose-400 border-rose-400/40"
                 onClick={() => setLoved((v) => !v)}
               />
               <ActionIconBtn
                 icon={<Bookmark size={13} />}
-                label="Save"
+                label={t("ui.save")}
                 active={saved}
                 activeClass="text-amber-400 border-amber-400/40"
                 onClick={() => setSaved((v) => !v)}
               />
               <ActionIconBtn
                 icon={<MessageSquare size={13} />}
-                label="Comment"
+                label={t("ui.comment")}
                 active={commenting}
                 activeClass="text-gallery-text-secondary border-gallery-border"
                 onClick={() => setCommenting((v) => !v)}
@@ -175,7 +188,7 @@ export const SelectedOverlay = ({
                       type="text"
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
-                      placeholder="Leave a thought…"
+                      placeholder={t("ui.writeComment")}
                       className="flex-1 border border-gallery-border bg-transparent px-3 py-2 text-xs text-gallery-text-secondary placeholder:text-gallery-text-muted focus:border-gallery-text-secondary focus:outline-none"
                     />
                     <button
@@ -205,8 +218,8 @@ export const SelectedOverlay = ({
             >
               <BadgeDollarSign size={13} />
               {supported
-                ? `Supporting · $${supportAmount}/mo`
-                : "Support artist"}
+                ? `${t("ui.supporting")} · $${supportAmount}/mo`
+                : t("ui.support")}
             </button>
           </div>
         </div>
@@ -232,7 +245,7 @@ export const SelectedOverlay = ({
               transition={{ ease: [0.4, 0, 0.2, 1], duration: 0.3 }}
             >
               <p className="text-[10px] tracking-[0.3em] text-gallery-text-muted uppercase mb-1">
-                Support
+                {t("ui.supportModal")}
               </p>
               <p className="text-lg font-light text-gallery-text-primary">
                 {artwork.artist.name}
@@ -241,7 +254,7 @@ export const SelectedOverlay = ({
               <div className="mt-6">
                 <div className="flex justify-between mb-3">
                   <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
-                    Monthly contribution
+                    {t("ui.monthlyContribution")}
                   </span>
                   <span className="text-sm font-light text-gallery-text-primary">
                     ${supportAmount} / mo
@@ -267,8 +280,7 @@ export const SelectedOverlay = ({
               </div>
 
               <p className="mt-4 text-[10px] leading-5 text-gallery-text-muted">
-                Your support goes directly to the artist each month. Cancel
-                anytime.
+                {t("ui.supportNote")}
               </p>
 
               <div className="mt-6 flex gap-2">
@@ -280,14 +292,14 @@ export const SelectedOverlay = ({
                   }}
                   className="flex-1 border border-emerald-500/50 py-2.5 text-[10px] tracking-[0.2em] text-emerald-400 uppercase transition hover:bg-emerald-500/10"
                 >
-                  Confirm
+                  {t("ui.confirm")}
                 </button>
                 <button
                   type="button"
                   onClick={() => setSupportOpen(false)}
                   className="flex-1 border border-gallery-border py-2.5 text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary"
                 >
-                  Cancel
+                  {t("ui.cancel")}
                 </button>
               </div>
             </motion.div>
