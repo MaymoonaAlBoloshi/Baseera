@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+# Baseera
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Baseera is a cinematic, interactive virtual gallery built for independent artists.
 
-Currently, two official plugins are available:
+It is not a static portfolio page pretending to be immersive. It is a real-time 3D space with atmosphere, movement, multilingual UX, responsive controls, and a distinct identity per artist collection.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What Makes It Special
 
-## React Compiler
+- Real-time 3D gallery built on a modern WebGL rendering stack
+- Curated landing flow with language and audio onboarding
+- Arabic and English support with direction-aware UI behavior
+- Ghost-style holographic characters and proximity-based visual effects
+- Dynamic artist galleries with their own visual mood and environment tuning
+- Mobile-first interaction model with touch movement/look controls
+- Adaptive quality path for lower-end devices
+- Contextual soundscape, including optional landing audio and stage audio behavior
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The result is a digital exhibition space that feels designed, not assembled.
 
-## Expanding the ESLint configuration
+## Feature Highlights
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Guided Cinematic Entry
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The landing experience is intentionally paced, with progressive onboarding steps and smooth visual transitions into the gallery world.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 2. Immersive Navigation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Desktop: pointer-lock style movement
+- Mobile: dual-zone touch controls for motion and camera look
+- Proximity interactions that react to where the user stands and what they face
+
+### 3. Artist-Centric Exploration
+
+- Selection mode to discover artists
+- Artist mode to dive into collection-specific spaces
+- Artwork overlays with metadata, poetry, and support interactions
+
+### 4. Atmosphere and Effects
+
+- Shader-driven walls and flooring treatment
+- Holographic ghost rendering pipeline for stage and proximity figures
+- Proximity-aware glow behavior and animation cues
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- WebGL-based 3D rendering pipeline
+- Reusable scene utilities and interaction helpers
+- Framer Motion
+- i18next
+- Tailwind CSS
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- npm 10+
+
+### Install
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Run in Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+## Project Structure (High Level)
+
+- src/screens/Landing: onboarding, atmospheric entry scene, and UI flow
+- src/screens/Gallary: main 3D gallery, controls, artwork systems, and environment
+- src/i18n: language resources and localization config
+- public/art, public/audio, public/models: static media and 3D assets
+
+## Deployment
+
+This project is ready for static deployment. A Netlify configuration is already present.
+
+Typical flow:
+
+1. Build using npm run build
+2. Deploy the dist output to your static host
+
+## Why Baseera Exists
+
+Its a POC for an itnerecctive gallary that if I have eough will power, I'll add a backend to, with websockets for real tiem visitors, audio commetery expereince, actual fund raising and support for artists
