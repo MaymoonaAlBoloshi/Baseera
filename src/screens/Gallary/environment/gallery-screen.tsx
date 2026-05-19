@@ -19,37 +19,6 @@ const PLINTH_WIDTH = 1.2;
 const PLINTH_DEPTH = 0.9;
 const PLINTH_HEIGHT = 0.9;
 
-const applyCompanionPose = (root: THREE.Object3D) => {
-  const setIf = (name: string, x = 0, y = 0, z = 0) => {
-    const bone = root.getObjectByName(name) as THREE.Bone | undefined;
-    if (bone) {
-      bone.rotation.x = x;
-      bone.rotation.y = y;
-      bone.rotation.z = z;
-    }
-  };
-
-  // A simple "listening" pose built from common Mixamo bone names.
-  setIf("Spine", 0.06, 0.12, 0);
-  setIf("Spine1", -0.03, 0.1, 0);
-  setIf("Spine2", -0.05, 0.16, 0);
-  setIf("Neck", 0, -0.25, 0);
-  setIf("Head", 0.03, -0.15, 0.04);
-
-  setIf("LeftShoulder", 0.15, 0.1, -0.05);
-  setIf("LeftArm", -0.25, 0.2, -0.3);
-  setIf("LeftForeArm", -0.55, 0.1, -0.2);
-  setIf("LeftHand", -0.05, 0.05, 0.15);
-
-  setIf("RightShoulder", 0.1, -0.05, 0.06);
-  setIf("RightArm", -0.1, -0.15, 0.16);
-  setIf("RightForeArm", -0.25, -0.08, 0.1);
-  setIf("RightHand", -0.04, -0.02, -0.1);
-
-  setIf("LeftUpLeg", 0.04, 0.03, 0.03);
-  setIf("RightUpLeg", -0.03, -0.02, -0.02);
-};
-
 const pickBestClip = (clips: THREE.AnimationClip[]) => {
   if (!clips.length) {
     return null;
@@ -87,14 +56,10 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
   const spotRef = useRef<THREE.SpotLight>(null);
   const targetRef = useRef<THREE.Object3D>(null);
   const characterMixerRef = useRef<THREE.AnimationMixer | null>(null);
-  const companionMixerRef = useRef<THREE.AnimationMixer | null>(null);
   const hologramMaterialsRef = useRef<THREE.ShaderMaterial[]>([]);
   const lastVol = useRef(-1);
   const { scene: radioScene } = useGLTF(RADIO_MODEL_PATH);
-  const [characterScene, companionScene] = useLoader(FBXLoader, [
-    CHARACTER_MODEL_PATH,
-    CHARACTER_MODEL_PATH,
-  ]);
+  const characterScene = useLoader(FBXLoader, CHARACTER_MODEL_PATH);
 
   const normalizedRadioScene = useMemo(() => {
     const clone = radioScene.clone(true);
@@ -357,10 +322,6 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
     return createGhostCharacter(characterScene, true);
   }, [characterScene]);
 
-  const normalizedCompanionScene = useMemo(() => {
-    return createGhostCharacter(companionScene);
-  }, [companionScene]);
-
   useEffect(() => {
     return () => {
       hologramMaterialsRef.current.forEach((material) => material.dispose());
@@ -380,27 +341,19 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
   }, []);
 
   useEffect(() => {
-    const tellerClips = [
-      ...(characterScene.animations ?? []),
-      ...(companionScene.animations ?? []),
-    ];
+    const tellerClips = characterScene.animations ?? [];
 
     if (!tellerClips.length) {
       characterMixerRef.current = null;
-      companionMixerRef.current = null;
-      applyCompanionPose(normalizedCompanionScene.object);
       return;
     }
 
     const mixer = new THREE.AnimationMixer(normalizedCharacterScene.object);
     characterMixerRef.current = mixer;
-    companionMixerRef.current = null;
 
     const tellerClip = pickBestClip(tellerClips);
     if (!tellerClip) {
       characterMixerRef.current = null;
-      companionMixerRef.current = null;
-      applyCompanionPose(normalizedCompanionScene.object);
       return;
     }
 
@@ -416,23 +369,16 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
     action.fadeIn(0.2);
     action.play();
 
-    // Leave the second character non-animated and force a manual pose.
-    applyCompanionPose(normalizedCompanionScene.object);
-
     return () => {
       action.fadeOut(0.15);
       mixer.stopAllAction();
       characterMixerRef.current = null;
-      companionMixerRef.current = null;
     };
-  }, [characterScene, normalizedCompanionScene, normalizedCharacterScene]);
+  }, [characterScene, normalizedCharacterScene]);
 
   useFrame((state, delta) => {
     if (characterMixerRef.current) {
       characterMixerRef.current.update(delta);
-    }
-    if (companionMixerRef.current) {
-      companionMixerRef.current.update(delta);
     }
 
     const elapsed = state.clock.elapsedTime;
@@ -557,12 +503,6 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
           rotation={[0, -Math.PI * 0.86, 0]}
         />
 
-        {/* ── Companion character listening ── */}
-        <primitive
-          object={normalizedCompanionScene.object}
-          position={[0.2, 0, 1.05]}
-          rotation={[0, Math.PI * 0.18, 0]}
-        />
         {!normalizedCharacterScene.hasVisibleMesh && (
           <mesh position={[0.95, 0.16, 0.95]} castShadow>
             <boxGeometry args={[0.14, 0.32, 0.14]} />
