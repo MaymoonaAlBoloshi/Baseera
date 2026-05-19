@@ -30,6 +30,7 @@ type GallerySceneProps = {
   isFocusMode: boolean;
   audioEnabled: boolean;
   brightness: number;
+  lowQuality: boolean;
 };
 
 export const GalleryScene = ({
@@ -45,6 +46,7 @@ export const GalleryScene = ({
   isFocusMode,
   audioEnabled,
   brightness,
+  lowQuality,
 }: GallerySceneProps) => {
   const galleryMap = useMemo(() => createGalleryMap(seed), [seed]);
 
@@ -84,7 +86,10 @@ export const GalleryScene = ({
       />
       <FootstepAudio isMuted={isFocusMode || !audioEnabled} />
 
-      <LightAudience artworkPositions={artworkLayout.map((a) => a.position)} />
+      <LightAudience
+        artworkPositions={artworkLayout.map((a) => a.position)}
+        lowQuality={lowQuality}
+      />
 
       <ambientLight
         intensity={artistConfig.ambientIntensity * brightness}
@@ -114,14 +119,15 @@ export const GalleryScene = ({
         onNearbyArtworkChange={onNearbyArtworkChange}
       />
 
-      {artworkLayout.map(({ artwork, normal, position }) => (
-        <ArtworkLight
-          key={`${artwork.id}-light`}
-          position={position}
-          normal={normal}
-          color={artistConfig.artworkLightColor}
-        />
-      ))}
+      {!lowQuality &&
+        artworkLayout.map(({ artwork, normal, position }) => (
+          <ArtworkLight
+            key={`${artwork.id}-light`}
+            position={position}
+            normal={normal}
+            color={artistConfig.artworkLightColor}
+          />
+        ))}
 
       {artworkLayout.map(({ artwork, position, rotation }) => (
         <ArtworkFrame

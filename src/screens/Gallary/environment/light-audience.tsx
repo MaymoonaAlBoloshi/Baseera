@@ -31,6 +31,7 @@ type WanderingOrbProps = {
   speed: number;
   waypoints: Waypoint[];
   startIndex: number;
+  lowQuality: boolean;
 };
 
 const WanderingOrb = ({
@@ -40,6 +41,7 @@ const WanderingOrb = ({
   speed,
   waypoints,
   startIndex,
+  lowQuality,
 }: WanderingOrbProps) => {
   const ref = useRef<Group>(null);
   const idx = useRef(startIndex % waypoints.length);
@@ -114,15 +116,17 @@ const WanderingOrb = ({
           depthWrite={false}
         />
       </mesh>
-      <Sparkles
-        count={sparkCount}
-        scale={0.6 * scale}
-        size={2.5}
-        speed={0.1}
-        opacity={0.75}
-        color={color}
-        noise={0.2}
-      />
+      {!lowQuality && (
+        <Sparkles
+          count={sparkCount}
+          scale={0.6 * scale}
+          size={2.5}
+          speed={0.1}
+          opacity={0.75}
+          color={color}
+          noise={0.2}
+        />
+      )}
     </group>
   );
 };
@@ -154,10 +158,14 @@ const PlayerLight = () => {
 
 type LightAudienceProps = {
   artworkPositions: [number, number, number][];
+  lowQuality?: boolean;
 };
 
-export const LightAudience = ({ artworkPositions }: LightAudienceProps) => {
-  const orbCount = 12;
+export const LightAudience = ({
+  artworkPositions,
+  lowQuality = false,
+}: LightAudienceProps) => {
+  const orbCount = lowQuality ? 3 : 12;
 
   const orbConfigs = useMemo<WanderingOrbProps[]>(() => {
     return Array.from({ length: orbCount }, (_, i) => {
@@ -183,10 +191,11 @@ export const LightAudience = ({ artworkPositions }: LightAudienceProps) => {
       return {
         color: COLORS[i % COLORS.length],
         scale: 0.7 + (i % 5) * 0.12,
-        sparkCount: 16 + (i % 4) * 6,
+        sparkCount: lowQuality ? 0 : 16 + (i % 4) * 6,
         speed: 0.002 + (i % 4) * 0.0003,
         waypoints,
-        startIndex: i, // stagger starting artwork
+        startIndex: i,
+        lowQuality,
       };
     });
   }, [artworkPositions]);

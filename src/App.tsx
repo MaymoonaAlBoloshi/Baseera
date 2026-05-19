@@ -3,6 +3,7 @@ import i18n from "./i18n/config";
 import { Gallery } from "./screens/Gallary";
 import { Landing } from "./screens/Landing";
 import type { OnboardingResult } from "./screens/Landing/types";
+import { DevPerformancePanel } from "./components/dev-performance-panel";
 
 type Phase = "landing" | "fading" | "gallery";
 
@@ -48,6 +49,8 @@ function App() {
               : "opacity 1.1s ease-out",
         }}
       />
+
+      {import.meta.env.DEV ? <DevPerformancePanel /> : null}
     </div>
   );
 }

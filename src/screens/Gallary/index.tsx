@@ -8,6 +8,7 @@ import { MobileControls } from "./controls/mobile-controls";
 import { GalleryScene } from "./scene";
 import { GalleryUi } from "./ui";
 import { useIsMobile } from "./hooks/use-is-mobile";
+import { useDeviceGrade } from "./hooks/use-device-grade";
 import { galleryArtworks, artistCollections } from "./data";
 
 import type { GalleryArtwork, GalleryView, MobileInputState } from "./types";
@@ -20,6 +21,8 @@ export const Gallery = ({
   const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const isPortrait = useIsPortrait();
+  const grade = useDeviceGrade();
+  const lowQuality = grade === "low";
   const audioIframeRef = useRef<HTMLIFrameElement | null>(null);
   const mobileInputRef = useRef<MobileInputState>({
     moveX: 0,
@@ -119,10 +122,10 @@ export const Gallery = ({
     <main className="relative h-screen w-screen overflow-hidden bg-gallery-background">
       <div key={currentSeed} ref={canvasWrapperRef} className="h-full w-full">
         <Canvas
-          shadows
-          dpr={[1, 2]}
+          shadows={!lowQuality}
+          dpr={lowQuality ? 1 : [1, 2]}
           gl={{
-            antialias: true,
+            antialias: !lowQuality,
             alpha: false,
             powerPreference: "high-performance",
           }}
@@ -143,6 +146,7 @@ export const Gallery = ({
             onNearbyArtworkChange={setNearbyArtwork}
             isFocusMode={Boolean(selectedArtwork)}
             audioEnabled={audioEnabled}
+            lowQuality={lowQuality}
             brightness={brightness}
           />
         </Canvas>
