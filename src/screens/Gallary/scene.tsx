@@ -51,6 +51,8 @@ export const GalleryScene = ({
   lowQuality,
 }: GallerySceneProps) => {
   const galleryMap = useMemo(() => createGalleryMap(seed), [seed]);
+  const lightFloor = 0.72;
+  const lightMultiplier = Math.max(lightFloor, brightness);
 
   // When the back-wall installation is visible, exclude the back wall from
   // artwork placement so nothing hangs behind the radio plinth.
@@ -98,13 +100,13 @@ export const GalleryScene = ({
       <FootstepAudio isMuted={isFocusMode || !audioEnabled} />
 
       <ambientLight
-        intensity={artistConfig.ambientIntensity * brightness}
+        intensity={artistConfig.ambientIntensity * lightMultiplier}
         color={artistConfig.ambientColor}
       />
 
       <directionalLight
         position={[0, 5, 6]}
-        intensity={artistConfig.directionalIntensity * brightness}
+        intensity={artistConfig.directionalIntensity * lightMultiplier}
         color={artistConfig.directionalColor}
       />
 

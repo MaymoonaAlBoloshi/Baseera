@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { Volume2, VolumeX } from "lucide-react";
 import { LandingAction } from "./components/landing-action";
 import { LandingCopy } from "./components/landing-copy";
 import { ProgressDots } from "./components/progress-dots";
@@ -42,7 +43,7 @@ export const LandingUi = ({
               <span className="mx-4 text-landing-text-muted">·</span>
               <span dir="rtl">اختر لغتك</span>
             </p>
-          ) : (
+          ) : step.kind === "choice" && step.id === "audio" ? null : (
             <LandingCopy text={step.text[language]} />
           )}
 
@@ -60,18 +61,40 @@ export const LandingUi = ({
               </div>
             )}
 
-            {step.kind === "choice" && (
-              <div className="flex gap-4">
-                <LandingAction
-                  label={step.yesLabel[language]}
-                  onClick={() => onChoice(true)}
-                />
-                <LandingAction
-                  label={step.noLabel[language]}
-                  onClick={() => onChoice(false)}
-                />
-              </div>
-            )}
+            {step.kind === "choice" &&
+              (step.id === "audio" ? (
+                <div className="flex gap-5">
+                  <button
+                    type="button"
+                    aria-label={step.yesLabel[language]}
+                    title={step.yesLabel[language]}
+                    onClick={() => onChoice(true)}
+                    className="flex h-14 w-14 items-center justify-center border border-landing-border text-landing-text-secondary transition hover:border-landing-text-primary hover:text-landing-text-primary"
+                  >
+                    <Volume2 size={24} />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={step.noLabel[language]}
+                    title={step.noLabel[language]}
+                    onClick={() => onChoice(false)}
+                    className="flex h-14 w-14 items-center justify-center border border-landing-border text-landing-text-secondary transition hover:border-landing-text-primary hover:text-landing-text-primary"
+                  >
+                    <VolumeX size={24} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-4">
+                  <LandingAction
+                    label={step.yesLabel[language]}
+                    onClick={() => onChoice(true)}
+                  />
+                  <LandingAction
+                    label={step.noLabel[language]}
+                    onClick={() => onChoice(false)}
+                  />
+                </div>
+              ))}
 
             {step.kind === "text" && (
               <LandingAction

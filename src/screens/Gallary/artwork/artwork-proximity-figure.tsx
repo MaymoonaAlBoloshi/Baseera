@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 
+import { galleryConfig } from "../configs";
 import type { PositionedArtwork } from "./artwork-layout";
 
 const CHARACTER_MODEL_PATH = "/models/man.fbx";
@@ -50,11 +51,16 @@ export const ArtworkProximityFigure = ({
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const actionRef = useRef<THREE.AnimationAction | null>(null);
   const hologramMaterialsRef = useRef<THREE.ShaderMaterial[]>([]);
+  const figureProbeRef = useRef(new THREE.Vector3());
+  const entryStartRef = useRef<number>(-1);
+  const ENTRY_DURATION = 0.55;
 
   const createGhostMaterial = (isSkinned: boolean) => {
     const hologramMaterial = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
+        uEntry: { value: 1 },
+        uEmissionGain: { value: 1.0 },
         uColor: { value: new THREE.Color("#58f4ff") },
         uEdgeColor: { value: new THREE.Color("#ecffff") },
         uOpacity: { value: 0.62 },
@@ -79,6 +85,7 @@ export const ArtworkProximityFigure = ({
         varying float vLocalY;
 
         uniform float uTime;
+        uniform float uEntry;
         uniform float uWarpAmount;
         uniform float uSliceAmount;
         uniform float uSliceSpeed;
@@ -118,6 +125,14 @@ export const ArtworkProximityFigure = ({
           #include <beginnormal_vertex>
           vec3 transformed = vec3(position);
 
+          // Entry burst lives in geometry space: mesh assembles from noisy slices.
+          float entryBurst = 1.0 - smoothstep(0.0, 1.0, uEntry);
+          float entryNoise = fbm(position.xy * 3.8 + vec2(uTime * 2.4, -uTime * 2.0)) - 0.5;
+          float strip = fract(position.y * 6.0 + uTime * 18.0);
+          transformed += objectNormal * (entryNoise * 0.34 * entryBurst);
+          transformed.y += (strip - 0.5) * (0.42 * entryBurst);
+          transformed.x += sin(position.y * 34.0 + uTime * 22.0) * (0.06 * entryBurst);
+
           float band = sin(position.y * 18.0 - uTime * 9.0);
           float drift = sin((position.y + position.x) * 5.5 + uTime * 2.2);
           float n = fbm(position.xz * uNoiseScale + vec2(uTime * 0.35, -uTime * 0.2));
@@ -145,6 +160,7 @@ export const ArtworkProximityFigure = ({
       `,
       fragmentShader: `
         uniform float uTime;
+        uniform float uEmissionGain;
         uniform vec3 uColor;
         uniform vec3 uEdgeColor;
         uniform float uOpacity;
@@ -210,7 +226,7 @@ export const ArtworkProximityFigure = ({
           float softPattern = mix(scan, plasma, 0.62);
           vec3 base = mix(uColor * 0.25, uColor * 1.05, softPattern);
           vec3 edge = uEdgeColor * fresnel * 1.9;
-          vec3 color = base + edge + (uEdgeColor * shimmer * 0.24);
+          vec3 color = (base + edge + (uEdgeColor * shimmer * 0.24)) * uEmissionGain;
 
           float alpha = uOpacity * (0.2 + 0.62 * softPattern) * dropout + fresnel * 0.21 + shimmer * 0.06;
           alpha = clamp(alpha, 0.08, 0.95);
@@ -225,7 +241,9 @@ export const ArtworkProximityFigure = ({
       side: THREE.DoubleSide,
     });
 
-    hologramMaterial.skinning = isSkinned;
+    (
+      hologramMaterial as THREE.ShaderMaterial & { skinning: boolean }
+    ).skinning = isSkinned;
     hologramMaterialsRef.current.push(hologramMaterial);
     return hologramMaterial;
   };
@@ -301,8 +319,33 @@ export const ArtworkProximityFigure = ({
 
   useFrame((state) => {
     const elapsed = state.clock.elapsedTime;
+
+    // Capture entry start on the first frame after a target change
+    if (entryStartRef.current === -1) {
+      entryStartRef.current = elapsed;
+    }
+    const entryAge = elapsed - entryStartRef.current;
+    const entryProgress = Math.min(1, entryAge / ENTRY_DURATION); // 0→1
+
+    let emissionGain = 0.8;
+    if (target) {
+      const [tx, , tz] = target.position;
+      const fx = tx + target.normal.x * 1.05;
+      const fz = tz + target.normal.z * 1.05;
+      figureProbeRef.current.set(fx, 0.9, fz);
+      const dist = state.camera.position.distanceTo(figureProbeRef.current);
+
+      const near = 1.1;
+      const far = Math.max(near + 0.1, galleryConfig.proximity.nearbyDistance);
+      const t = 1 - Math.max(0, Math.min(1, (dist - near) / (far - near)));
+      const smoothT = t * t * (3 - 2 * t);
+      emissionGain = 0.65 + smoothT * 1.35;
+    }
+
     hologramMaterialsRef.current.forEach((material, index) => {
       const timeUniform = material.uniforms.uTime;
+      const entryUniform = material.uniforms.uEntry;
+      const emissionUniform = material.uniforms.uEmissionGain;
       const opacityUniform = material.uniforms.uOpacity;
       const warpUniform = material.uniforms.uWarpAmount;
       const sliceUniform = material.uniforms.uSliceAmount;
@@ -313,10 +356,19 @@ export const ArtworkProximityFigure = ({
       if (timeUniform) {
         timeUniform.value = elapsed + index * 0.06;
       }
+      if (entryUniform) {
+        entryUniform.value = entryProgress;
+      }
+      if (emissionUniform) {
+        const pulse = 0.96 + 0.08 * Math.sin(elapsed * 3.3 + index * 0.5);
+        emissionUniform.value = emissionGain * pulse;
+      }
       if (opacityUniform) {
-        const pulse = 0.52 + 0.1 * Math.sin(elapsed * 2.2 + index * 0.5);
-        const flash = Math.max(0, Math.sin(elapsed * 12.0 + index * 0.8));
-        opacityUniform.value = pulse + flash * 0.08;
+        // Two beating frequencies → irregular rapid in-out strobe effect
+        const a = Math.abs(Math.sin(elapsed * 22.0 + index * 1.3));
+        const b = Math.abs(Math.sin(elapsed * 7.5 + index * 0.9));
+        const base = Math.min(0.95, Math.max(0.05, a * b * 0.88 + 0.08));
+        opacityUniform.value = base;
       }
       if (warpUniform) {
         warpUniform.value =
@@ -355,6 +407,9 @@ export const ArtworkProximityFigure = ({
     action.time = randomTime;
     mixer.update(0);
     action.paused = true;
+
+    // Trigger entry materialization effect
+    entryStartRef.current = -1;
   }, [target?.artwork.id]);
 
   if (!target) {

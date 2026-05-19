@@ -2,10 +2,6 @@ import type { LandingStep } from "./types";
 
 export const landingSteps: LandingStep[] = [
   {
-    kind: "language",
-    id: "language",
-  },
-  {
     kind: "choice",
     id: "audio",
     text: {
@@ -14,6 +10,10 @@ export const landingSteps: LandingStep[] = [
     },
     yesLabel: { ar: "نعم", en: "Yes" },
     noLabel: { ar: "لا", en: "No" },
+  },
+  {
+    kind: "language",
+    id: "language",
   },
   {
     kind: "text",

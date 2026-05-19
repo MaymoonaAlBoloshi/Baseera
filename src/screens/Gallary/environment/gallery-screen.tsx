@@ -287,7 +287,9 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
           depthTest: true,
           side: THREE.DoubleSide,
         });
-        hologramMaterial.skinning = obj instanceof THREE.SkinnedMesh;
+        (
+          hologramMaterial as THREE.ShaderMaterial & { skinning: boolean }
+        ).skinning = obj instanceof THREE.SkinnedMesh;
         hologramMaterialsRef.current.push(hologramMaterial);
         obj.material = hologramMaterial;
       }
@@ -395,9 +397,13 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
         timeUniform.value = elapsed + index * 0.06;
       }
       if (opacityUniform) {
-        const pulse = 0.52 + 0.1 * Math.sin(elapsed * 2.2 + index * 0.5);
-        const flash = Math.max(0, Math.sin(elapsed * 12.0 + index * 0.8));
-        opacityUniform.value = pulse + flash * 0.08;
+        // Two beating frequencies → irregular rapid in-out strobe effect
+        const a = Math.abs(Math.sin(elapsed * 22.0 + index * 1.3));
+        const b = Math.abs(Math.sin(elapsed * 7.5 + index * 0.9));
+        opacityUniform.value = Math.min(
+          0.95,
+          Math.max(0.05, a * b * 0.88 + 0.08),
+        );
       }
       if (warpUniform) {
         warpUniform.value =

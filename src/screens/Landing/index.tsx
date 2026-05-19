@@ -13,46 +13,65 @@ type LandingProps = {
 export const Landing = ({ onComplete }: LandingProps) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [language, setLanguage] = useState<Language>("ar");
-  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [audioEnabled, setAudioEnabled] = useState(false);
 
   const musicRef = useRef<HTMLAudioElement | null>(null);
   const fadeRef = useRef(0);
+  const fadeOutRef = useRef(0);
 
-  // Start music once on mount, clean up only when Landing unmounts
+  // Keep only transition fade-out wiring here; playback starts after explicit opt-in.
   useEffect(() => {
-    const audio = new Audio("/audio/music.mp3");
-    audio.loop = true;
-    audio.volume = 0;
-    musicRef.current = audio;
-    audio.play().catch(() => {});
-    let vol = 0;
-    fadeRef.current = window.setInterval(() => {
-      vol = Math.min(vol + 0.012, 0.45);
-      audio.volume = vol;
-      if (vol >= 0.45) clearInterval(fadeRef.current);
-    }, 60);
-
-    // Fade out when App signals we're transitioning to gallery
     const handleExit = () => {
+      const audio = musicRef.current;
+      if (!audio) {
+        return;
+      }
       clearInterval(fadeRef.current);
+      clearInterval(fadeOutRef.current);
       const startVol = audio.volume;
       const steps = 40;
       let step = 0;
-      const out = window.setInterval(() => {
+      fadeOutRef.current = window.setInterval(() => {
         step++;
         audio.volume = Math.max(0, startVol * (1 - step / steps));
-        if (step >= steps) clearInterval(out);
+        if (step >= steps) clearInterval(fadeOutRef.current);
       }, 22); // ~880 ms total
     };
     window.addEventListener("landing-exit", handleExit);
 
     return () => {
       clearInterval(fadeRef.current);
+      clearInterval(fadeOutRef.current);
       window.removeEventListener("landing-exit", handleExit);
-      audio.pause();
-      audio.src = "";
+      musicRef.current?.pause();
+      if (musicRef.current) {
+        musicRef.current.src = "";
+      }
+      musicRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (!audioEnabled || musicRef.current) {
+      return;
+    }
+
+    const audio = new Audio("/audio/music.mp3");
+    audio.loop = true;
+    audio.volume = 0;
+    musicRef.current = audio;
+    audio.play().catch(() => {});
+
+    let vol = 0;
+    clearInterval(fadeRef.current);
+    fadeRef.current = window.setInterval(() => {
+      vol = Math.min(vol + 0.012, 0.45);
+      audio.volume = vol;
+      if (vol >= 0.45) {
+        clearInterval(fadeRef.current);
+      }
+    }, 60);
+  }, [audioEnabled]);
 
   const currentStep = landingSteps[currentStepIndex];
   const isLastStep = currentStepIndex === landingSteps.length - 1;

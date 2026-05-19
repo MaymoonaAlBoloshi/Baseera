@@ -21,7 +21,7 @@ const CorridorLight = () => {
   useFrame((state) => {
     if (!ref.current) return;
     const t = state.clock.elapsedTime;
-    ref.current.intensity = 0.55 + Math.sin(t * 0.38) * 0.18;
+    ref.current.intensity = 0.82 + Math.sin(t * 0.38) * 0.2;
   });
   return (
     <pointLight
@@ -42,8 +42,8 @@ export const LandingScene = () => {
       <color attach="background" args={[colors.background]} />
       <fog attach="fog" args={[colors.background, 6, 38]} />
 
-      <ambientLight intensity={0.08} color="#f4e8cc" />
-      <directionalLight position={[0, 6, 4]} intensity={0.3} color="#f4f0e8" />
+      <ambientLight intensity={0.16} color="#f4e8cc" />
+      <directionalLight position={[0, 6, 4]} intensity={0.45} color="#f4f0e8" />
 
       <CameraRig />
       <CorridorLight />
