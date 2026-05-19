@@ -8,7 +8,7 @@
     "followers": "متابعون",
     "supporters": "داعمون",
     "visitors": "زوار",
-    "allArtists": "← كل الفنانين",
+    "allArtists": "كل الفنانين →",
     "clickToEnter": "انقر للدخول",
     "clickToView": "انقر للمشاهدة",
     "year": "السنة",
@@ -24,7 +24,9 @@
     "monthlyContribution": "مساهمة شهرية",
     "supportNote": "دعمك يذهب مباشرة إلى الفنان كل شهر. يمكنك الإلغاء في أي وقت.",
     "confirm": "تأكيد",
-    "cancel": "إلغاء"
+    "cancel": "إلغاء",
+    "viewPainting": "عرض اللوحة",
+    "mobileMoveLookHint": "يسار - تحرّك · يمين - انظر"
   },
   "artists": {
     "Noor Al-Rashid":  { "style": "تجريد تأملي" },

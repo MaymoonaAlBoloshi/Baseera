@@ -37,7 +37,8 @@ export const GalleryUi = ({
   onBrightnessChange,
 }: GalleryUiProps) => {
   const [brightnessOpen, setBrightnessOpen] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
   // The artist to display in the persistent HUD (artist mode)
   const displayArtist = currentArtistArtwork?.artist ?? nearbyArtwork?.artist;
 
@@ -96,9 +97,9 @@ export const GalleryUi = ({
           type="button"
           onClick={toggleFullscreen}
           aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-          className={`absolute top-8 right-8 z-20 flex items-center justify-center border border-gallery-border text-gallery-text-muted transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary ${
-            isMobile ? "w-12 h-12" : "w-9 h-9"
-          }`}
+          className={`absolute top-8 z-20 flex items-center justify-center border border-gallery-border text-gallery-text-muted transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary ${
+            isRTL ? "left-8" : "right-8"
+          } ${isMobile ? "w-12 h-12" : "w-9 h-9"}`}
         >
           {isFullscreen ? (
             <Minimize2 size={isMobile ? 20 : 16} />
@@ -112,7 +113,17 @@ export const GalleryUi = ({
       {!selectedArtwork && (
         <div
           className={`absolute top-8 z-20 ${
-            canFullscreen ? (isMobile ? "right-24" : "right-20") : "right-8"
+            isRTL
+              ? canFullscreen
+                ? isMobile
+                  ? "left-24"
+                  : "left-20"
+                : "left-8"
+              : canFullscreen
+                ? isMobile
+                  ? "right-24"
+                  : "right-20"
+                : "right-8"
           }`}
         >
           <button
@@ -131,7 +142,9 @@ export const GalleryUi = ({
           <AnimatePresence>
             {brightnessOpen && (
               <motion.div
-                className="absolute right-0 top-full mt-2 flex flex-col items-center gap-3 border border-gallery-border bg-gallery-background px-3 py-4"
+                className={`absolute top-full mt-2 flex flex-col items-center gap-3 border border-gallery-border bg-gallery-background px-3 py-4 ${
+                  isRTL ? "left-0" : "right-0"
+                }`}
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
@@ -164,14 +177,16 @@ export const GalleryUi = ({
             key="back"
             type="button"
             onClick={onBack}
-            className={`absolute left-8 top-8 z-10 border border-gallery-border text-gallery-text-muted uppercase transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary ${
+            className={`absolute top-8 z-10 border border-gallery-border text-gallery-text-muted uppercase transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary ${
+              isRTL ? "right-8" : "left-8"
+            } ${
               isMobile
                 ? "px-6 py-4 text-sm tracking-[0.2em]"
                 : "px-5 py-2.5 text-xs tracking-[0.25em]"
             }`}
-            initial={{ opacity: 0, x: -8 }}
+            initial={{ opacity: 0, x: isRTL ? 8 : -8 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -8 }}
+            exit={{ opacity: 0, x: isRTL ? 8 : -8 }}
             transition={dream}
           >
             {t("ui.allArtists")}
@@ -184,7 +199,9 @@ export const GalleryUi = ({
         {!selectedArtwork && mode === "selection" && (
           <motion.div
             key="baseera-hud"
-            className="pointer-events-none absolute bottom-10 left-4 sm:left-10"
+            className={`pointer-events-none absolute bottom-10 ${
+              isRTL ? "right-4 sm:right-10 text-right" : "left-4 sm:left-10"
+            }`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
@@ -199,7 +216,9 @@ export const GalleryUi = ({
             <p className="mt-1.5 text-xs text-gallery-text-secondary">
               {t("ui.tagline")}
             </p>
-            <div className="mt-4 flex gap-5">
+            <div
+              className={`mt-4 flex gap-5 ${isRTL ? "flex-row-reverse" : ""}`}
+            >
               <div>
                 <p className="text-base font-light text-gallery-text-primary">
                   9
@@ -224,7 +243,9 @@ export const GalleryUi = ({
         {!selectedArtwork && mode === "artist" && displayArtist && (
           <motion.div
             key={`artist-hud-${displayArtist.name}`}
-            className="pointer-events-none absolute bottom-10 left-4 sm:left-10"
+            className={`pointer-events-none absolute bottom-10 ${
+              isRTL ? "right-4 sm:right-10 text-right" : "left-4 sm:left-10"
+            }`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
@@ -238,7 +259,9 @@ export const GalleryUi = ({
             <p className="text-3xl font-light text-gallery-text-primary">
               {displayArtist.name}
             </p>
-            <div className="mt-4 flex gap-5">
+            <div
+              className={`mt-4 flex gap-5 ${isRTL ? "flex-row-reverse" : ""}`}
+            >
               <div>
                 <p className="text-base font-light text-gallery-text-primary">
                   {displayArtist.followers}
@@ -275,7 +298,9 @@ export const GalleryUi = ({
         {!selectedArtwork && nearbyArtwork && !isMobile && (
           <motion.div
             key={nearbyArtwork.id}
-            className="pointer-events-none absolute bottom-10 right-10 text-right"
+            className={`pointer-events-none absolute bottom-10 ${
+              isRTL ? "left-10 text-left" : "right-10 text-right"
+            }`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}

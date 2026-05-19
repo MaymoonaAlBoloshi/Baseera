@@ -24,7 +24,9 @@
     "monthlyContribution": "Monthly contribution",
     "supportNote": "Your support goes directly to the artist each month. Cancel anytime.",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "viewPainting": "View painting",
+    "mobileMoveLookHint": "Left - move · Right - look"
   },
   "artists": {
     "Noor Al-Rashid":  { "style": "Contemplative Abstraction" },

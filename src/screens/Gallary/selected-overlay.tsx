@@ -31,7 +31,8 @@ export const SelectedOverlay = ({
   const [supportOpen, setSupportOpen] = useState(false);
   const [supportAmount, setSupportAmount] = useState(5);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
   const title = t(`artworks.${artwork.id}.title`, {
     defaultValue: artwork.title,
   });
@@ -68,14 +69,18 @@ export const SelectedOverlay = ({
         type="button"
         onClick={onClose}
         aria-label="Close"
-        className="absolute top-6 right-6 z-20 flex items-center justify-center w-9 h-9 border border-gallery-border text-gallery-text-muted transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary"
+        className={`absolute top-6 z-20 flex items-center justify-center w-9 h-9 border border-gallery-border text-gallery-text-muted transition hover:border-gallery-text-secondary hover:text-gallery-text-secondary ${
+          isRTL ? "left-6" : "right-6"
+        }`}
       >
         <X size={16} />
       </button>
 
       {/* Content */}
       <motion.article
-        className="relative z-10 grid max-w-6xl w-full grid-cols-1 gap-6 sm:grid-cols-[minmax(0,1fr)_320px] sm:gap-12"
+        className={`relative z-10 grid max-w-6xl w-full grid-cols-1 gap-6 sm:grid-cols-[minmax(0,1fr)_320px] sm:gap-12 ${
+          isRTL ? "text-right" : "text-left"
+        }`}
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
@@ -116,7 +121,11 @@ export const SelectedOverlay = ({
               <span className="text-[10px] tracking-[0.2em] text-gallery-text-muted uppercase">
                 {t("ui.medium")}
               </span>
-              <span className="text-[11px] text-gallery-text-secondary text-right max-w-[58%]">
+              <span
+                className={`text-[11px] text-gallery-text-secondary max-w-[58%] ${
+                  isRTL ? "text-left" : "text-right"
+                }`}
+              >
                 {medium}
               </span>
             </div>
@@ -131,7 +140,13 @@ export const SelectedOverlay = ({
           </div>
 
           {/* Poem */}
-          <p className="whitespace-pre-line text-sm font-light leading-7 text-gallery-text-primary border-l border-gallery-border pl-3">
+          <p
+            className={`whitespace-pre-line text-sm font-light leading-7 text-gallery-text-primary ${
+              isRTL
+                ? "border-r border-gallery-border pr-3"
+                : "border-l border-gallery-border pl-3"
+            }`}
+          >
             {poem}
           </p>
 

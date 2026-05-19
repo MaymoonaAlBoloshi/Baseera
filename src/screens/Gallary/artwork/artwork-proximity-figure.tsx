@@ -8,6 +8,12 @@ import { galleryConfig } from "../configs";
 import type { PositionedArtwork } from "./artwork-layout";
 
 const CHARACTER_MODEL_PATH = "/models/man.fbx";
+const ENTRY_DURATION = 0.55;
+const PROXIMITY_NEAR = 1.1;
+const PROXIMITY_FAR = Math.max(
+  PROXIMITY_NEAR + 0.1,
+  galleryConfig.proximity.nearbyDistance,
+);
 
 const pickBestClip = (clips: THREE.AnimationClip[]) => {
   if (!clips.length) {
@@ -53,7 +59,6 @@ export const ArtworkProximityFigure = ({
   const hologramMaterialsRef = useRef<THREE.ShaderMaterial[]>([]);
   const figureProbeRef = useRef(new THREE.Vector3());
   const entryStartRef = useRef<number>(-1);
-  const ENTRY_DURATION = 0.55;
 
   const createGhostMaterial = (isSkinned: boolean) => {
     const hologramMaterial = new THREE.ShaderMaterial({
@@ -318,6 +323,10 @@ export const ArtworkProximityFigure = ({
   }, []);
 
   useFrame((state) => {
+    if (!target) {
+      return;
+    }
+
     const elapsed = state.clock.elapsedTime;
 
     // Capture entry start on the first frame after a target change
@@ -327,22 +336,23 @@ export const ArtworkProximityFigure = ({
     const entryAge = elapsed - entryStartRef.current;
     const entryProgress = Math.min(1, entryAge / ENTRY_DURATION); // 0→1
 
-    let emissionGain = 0.8;
-    if (target) {
-      const [tx, , tz] = target.position;
-      const fx = tx + target.normal.x * 1.05;
-      const fz = tz + target.normal.z * 1.05;
-      figureProbeRef.current.set(fx, 0.9, fz);
-      const dist = state.camera.position.distanceTo(figureProbeRef.current);
+    const [tx, , tz] = target.position;
+    const fx = tx + target.normal.x * 1.05;
+    const fz = tz + target.normal.z * 1.05;
+    figureProbeRef.current.set(fx, 0.9, fz);
+    const dist = state.camera.position.distanceTo(figureProbeRef.current);
+    const t =
+      1 -
+      Math.max(
+        0,
+        Math.min(1, (dist - PROXIMITY_NEAR) / (PROXIMITY_FAR - PROXIMITY_NEAR)),
+      );
+    const smoothT = t * t * (3 - 2 * t);
+    const emissionGain = 0.65 + smoothT * 1.35;
 
-      const near = 1.1;
-      const far = Math.max(near + 0.1, galleryConfig.proximity.nearbyDistance);
-      const t = 1 - Math.max(0, Math.min(1, (dist - near) / (far - near)));
-      const smoothT = t * t * (3 - 2 * t);
-      emissionGain = 0.65 + smoothT * 1.35;
-    }
-
-    hologramMaterialsRef.current.forEach((material, index) => {
+    const materials = hologramMaterialsRef.current;
+    for (let index = 0; index < materials.length; index += 1) {
+      const material = materials[index];
       const timeUniform = material.uniforms.uTime;
       const entryUniform = material.uniforms.uEntry;
       const emissionUniform = material.uniforms.uEmissionGain;
@@ -390,7 +400,7 @@ export const ArtworkProximityFigure = ({
         const burst = Math.max(0, Math.sin(elapsed * 6.2 + index * 0.9));
         glitchUniform.value = 0.85 + burst * 0.5;
       }
-    });
+    }
   });
 
   useEffect(() => {

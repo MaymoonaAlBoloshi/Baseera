@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
+import { useTranslation } from "react-i18next";
 
 import type { MobileInputState } from "../types";
 
@@ -21,6 +22,9 @@ export const MobileControls = ({
   nearbyArtworkTitle,
   onSelectNearby,
 }: MobileControlsProps) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   // Joystick visual state
   const [joystick, setJoystick] = useState<{
     baseX: number;
@@ -190,16 +194,16 @@ export const MobileControls = ({
             }}
             className="border border-gallery-border bg-gallery-background/80 px-8 py-3 text-[11px] tracking-[0.3em] text-gallery-text-secondary uppercase backdrop-blur-sm active:border-gallery-text-secondary active:text-gallery-text-primary"
           >
-            View painting
+            {t("ui.viewPainting")}
           </button>
         </div>
       )}
 
       {/* Joystick hint — shown briefly when no touch active */}
       {!joystick.visible && !isDisabled && (
-        <div className="absolute bottom-8 left-8">
+        <div className={`absolute bottom-4 ${isRTL ? "right-8" : "left-8"}`}>
           <p className="text-[9px] tracking-[0.3em] text-white/20 uppercase">
-            Left — move · Right — look
+            {t("ui.mobileMoveLookHint")}
           </p>
         </div>
       )}

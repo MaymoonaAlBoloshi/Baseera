@@ -15,7 +15,7 @@ type GalleryScreenProps = {
 
 const RADIO_MODEL_PATH = "/models/player.glb";
 const CHARACTER_MODEL_PATH = "/models/man.fbx";
-const PLINTH_WIDTH = 1.2;
+const PLINTH_WIDTH = 0.9;
 const PLINTH_DEPTH = 0.9;
 const PLINTH_HEIGHT = 0.9;
 
@@ -82,7 +82,7 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
     box.getCenter(center);
 
     if (size.y > 0) {
-      const targetHeight = 0.5;
+      const targetHeight = 0.35;
       const scale = targetHeight / size.y;
       clone.scale.setScalar(scale);
     }
@@ -500,7 +500,7 @@ export const GalleryScreen = ({ backWallZ, iframeRef }: GalleryScreenProps) => {
         </mesh>
 
         {/* ── Radio model ── */}
-        <primitive object={normalizedRadioScene} position={[0, 1.18, 0.2]} />
+        <primitive object={normalizedRadioScene} position={[0, 1.1, 0.2]} />
 
         {/* ── Character near radio ── */}
         <primitive
