@@ -2,6 +2,12 @@
 
 Baseera is a cinematic, interactive virtual gallery built for independent artists.
 
+## Live Experience
+
+### [ENTER BASEERA](https://baseera-arts.netlify.app)
+
+Open the live build and walk the gallery in real time.
+
 It is not a static portfolio page pretending to be immersive. It is a real-time 3D space with atmosphere, movement, multilingual UX, responsive controls, and a distinct identity per artist collection.
 
 ## What Makes It Special
