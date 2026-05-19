@@ -85,41 +85,51 @@ void main() {
   // Aspect-correct so tiles are physically square in world space
   vec2 aspectUv = vec2(uv.x * uAspectRatio, uv.y);
 
-  // Tile grid — 5 tiles along the short axis
-  vec2 tileUv = fract(aspectUv * 5.0);
+  // Clear tile cadence with visible seams
+  float tileScale = 8.0;
+  vec2 gridUv = aspectUv * tileScale;
+  vec2 tileUv = fract(gridUv);
+  vec2 tileId = floor(gridUv);
 
-  // Smooth grout lines — very thin and subtle
-  float groutW = 0.028;
-  float gx = smoothstep(0.0, groutW, tileUv.x) * smoothstep(1.0, 1.0 - groutW, tileUv.x);
-  float gy = smoothstep(0.0, groutW, tileUv.y) * smoothstep(1.0, 1.0 - groutW, tileUv.y);
-  float grout = 1.0 - (gx * gy);
+  float groutW = 0.052;
+  float edgeX = min(tileUv.x, 1.0 - tileUv.x);
+  float edgeY = min(tileUv.y, 1.0 - tileUv.y);
+  float edgeDist = min(edgeX, edgeY);
+  float grout = 1.0 - smoothstep(groutW, groutW + 0.018, edgeDist);
 
-  // Very slow drifting sheen — light catching a polished surface
-  float sheen = sin(uv.x * 2.8 + uTime * 0.07) * 0.5 + 0.5;
-  sheen *= sin(uv.y * 2.2 - uTime * 0.05) * 0.5 + 0.5;
-  sheen = pow(sheen, 4.0) * 0.035;
+  // Alternate neighboring tile tone for stronger "tile" read
+  float checker = mod(tileId.x + tileId.y, 2.0);
+  float tileTone = mix(0.88, 1.0, checker);
 
-  vec3 stoneColor = vec3(0.058, 0.052, 0.045);
-  vec3 groutColor = vec3(0.036, 0.032, 0.028);
-  vec3 sheenColor = vec3(0.14, 0.11, 0.08);
-
-  vec3 finalColor = mix(stoneColor, groutColor, grout * 0.65);
-  finalColor += sheenColor * sheen;
+  // Slow polished highlight sweep
+  float sheen = sin(uv.x * 3.2 + uTime * 0.1) * 0.5 + 0.5;
+  sheen *= sin(uv.y * 2.5 - uTime * 0.08) * 0.5 + 0.5;
+  sheen = pow(sheen, 4.5) * 0.05;
 
   // Soft edge vignette
   float edge = smoothstep(0.0, 0.07, uv.x) * smoothstep(1.0, 0.93, uv.x)
              * smoothstep(0.0, 0.07, uv.y) * smoothstep(1.0, 0.93, uv.y);
 
   // Overlay only — base colour and lighting come from meshStandardMaterial beneath
-  // Grout lines: subtle dark overlay; sheen: subtle warm bright overlay
-  float groutAlpha = grout * 0.55 * edge;
+  // Grout lines are now clearer; sheen remains subtle.
+  float groutAlpha = grout * 0.72 * edge;
   float sheenAlpha = sheen * edge;
+  float tileToneAlpha = (1.0 - tileTone) * 0.12 * edge;
 
   vec3 groutColor = vec3(0.012, 0.010, 0.008);
   vec3 sheenColor = vec3(0.24, 0.17, 0.09);
+  vec3 tileToneColor = vec3(0.016, 0.013, 0.010);
 
-  vec3 color = sheenAlpha > groutAlpha ? sheenColor : groutColor;
-  float alpha = max(groutAlpha, sheenAlpha);
+  vec3 color = groutColor;
+  float alpha = groutAlpha;
+  if (tileToneAlpha > alpha) {
+    color = tileToneColor;
+    alpha = tileToneAlpha;
+  }
+  if (sheenAlpha > alpha) {
+    color = sheenColor;
+    alpha = sheenAlpha;
+  }
 
   gl_FragColor = vec4(color, alpha);
 }

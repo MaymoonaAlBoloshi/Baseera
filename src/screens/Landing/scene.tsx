@@ -21,7 +21,7 @@ const CorridorLight = () => {
   useFrame((state) => {
     if (!ref.current) return;
     const t = state.clock.elapsedTime;
-    ref.current.intensity = 0.82 + Math.sin(t * 0.38) * 0.2;
+    ref.current.intensity = 1.18 + Math.sin(t * 0.38) * 0.26;
   });
   return (
     <pointLight
@@ -42,8 +42,8 @@ export const LandingScene = () => {
       <color attach="background" args={[colors.background]} />
       <fog attach="fog" args={[colors.background, 6, 38]} />
 
-      <ambientLight intensity={0.16} color="#f4e8cc" />
-      <directionalLight position={[0, 6, 4]} intensity={0.45} color="#f4f0e8" />
+      <ambientLight intensity={0.26} color="#f4e8cc" />
+      <directionalLight position={[0, 6, 4]} intensity={0.7} color="#f4f0e8" />
 
       <CameraRig />
       <CorridorLight />
@@ -66,7 +66,7 @@ export const LandingScene = () => {
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, -10]}>
         <planeGeometry args={[12, 60]} />
         <meshStandardMaterial
-          color="#080706"
+          color="#1c1914"
           roughness={0.25}
           metalness={0.5}
         />
@@ -75,7 +75,7 @@ export const LandingScene = () => {
       {/* Ceiling — dark, just enough to close the space */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 5.5, -10]}>
         <planeGeometry args={[12, 60]} />
-        <meshStandardMaterial color="#060504" roughness={1} metalness={0} />
+        <meshStandardMaterial color="#17130f" roughness={1} metalness={0} />
       </mesh>
 
       {/* Floating dust — very sparse, barely visible */}

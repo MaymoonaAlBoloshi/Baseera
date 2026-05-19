@@ -131,7 +131,7 @@ export const Landing = ({ onComplete }: LandingProps) => {
         className="pointer-events-none absolute inset-0 z-20"
         style={{
           background:
-            "radial-gradient(ellipse 75% 70% at 50% 50%, transparent 30%, rgba(5,5,4,0.55) 70%, rgba(5,5,4,0.92) 100%)",
+            "radial-gradient(ellipse 78% 74% at 50% 50%, transparent 40%, rgba(5,5,4,0.28) 75%, rgba(5,5,4,0.5) 100%)",
         }}
       />
     </main>

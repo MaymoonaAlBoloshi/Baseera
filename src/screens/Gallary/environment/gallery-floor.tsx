@@ -38,8 +38,8 @@ export const GalleryFloor = ({ floor, artistConfig }: GalleryFloorProps) => {
               ? artistConfig.ceilingBaseColor
               : artistConfig.floorBaseColor
           }
-          roughness={1}
-          metalness={0}
+          roughness={isCeiling ? 1 : 0.72}
+          metalness={isCeiling ? 0 : 0.08}
         />
       </mesh>
 

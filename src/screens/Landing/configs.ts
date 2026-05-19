@@ -14,9 +14,9 @@ export const speedGridConfig = {
   },
 
   colors: {
-    background: "#050504",
-    wallBase: "#0d0b09",
-    wallWire: [0.13, 0.115, 0.098] as [number, number, number],
+    background: "#11100d",
+    wallBase: "#1a1612",
+    wallWire: [0.22, 0.19, 0.15] as [number, number, number],
   },
 
   drift: {
