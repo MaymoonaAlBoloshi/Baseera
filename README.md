@@ -99,6 +99,14 @@ Typical flow:
 1. Build using npm run build
 2. Deploy the dist output to your static host
 
+## Future optimization
+
+Dude, it can run on a T460 just fine.. BUTT we can convert FBX models to GLB (a more compressed file format), preload assets during the onboarding screen, and maybe spawn items on proximity to optimize GPU usage, just in case you want to run this on a microwave.
+
 ## Why Baseera Exists
 
-Its a POC for an itnerecctive gallary that if I have eough will power, I'll add a backend to, with websockets for real tiem visitors, audio commetery expereince, actual fund raising and support for artists
+It's a POC for an interactive gallery. If I have enough willpower, I'll add a backend with WebSockets for real-time visitors, an audio commentary experience, and actual fundraising support for artists.
+
+## Wanna collab for the next big thing
+
+Reach out ;)
