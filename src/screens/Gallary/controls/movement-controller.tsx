@@ -176,9 +176,17 @@ export const MovementController = ({
     }
 
     if (movementVector.lengthSq() > 0) {
+      const isSprinting =
+        !isMobile &&
+        (pressedKeys.has("shift") ||
+          pressedKeys.has("shiftleft") ||
+          pressedKeys.has("shiftright"));
+
       movementVector
         .normalize()
-        .multiplyScalar(galleryConfig.movement.moveSpeed);
+        .multiplyScalar(
+          galleryConfig.movement.moveSpeed * (isSprinting ? 2 : 1),
+        );
 
       targetPosition.current.add(movementVector);
     }

@@ -119,7 +119,7 @@ export const Gallery = ({
   }, [view.mode, selectedArtwork]);
 
   return (
-    <main className="relative h-screen w-screen overflow-hidden bg-gallery-background">
+    <main className="relative h-dvh w-screen overflow-hidden bg-gallery-background">
       <div key={currentSeed} ref={canvasWrapperRef} className="h-full w-full">
         <Canvas
           shadows={!lowQuality}
@@ -144,6 +144,7 @@ export const Gallery = ({
             audioIframeRef={audioIframeRef}
             onSelectArtwork={handleSelectArtwork}
             onNearbyArtworkChange={setNearbyArtwork}
+            nearbyArtwork={nearbyArtwork}
             isFocusMode={Boolean(selectedArtwork)}
             audioEnabled={audioEnabled}
             lowQuality={lowQuality}

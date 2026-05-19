@@ -84,16 +84,18 @@ export const Landing = ({ onComplete }: LandingProps) => {
   return (
     <main
       dir={language === "ar" ? "rtl" : "ltr"}
-      className="relative h-screen w-screen overflow-hidden bg-landing-background"
+      className="relative h-dvh w-screen overflow-hidden bg-landing-background"
     >
-      <Canvas
-        camera={{
-          position: speedGridConfig.camera.position,
-          fov: speedGridConfig.camera.fov,
-        }}
-      >
-        <LandingScene />
-      </Canvas>
+      <div className="absolute inset-0">
+        <Canvas
+          camera={{
+            position: speedGridConfig.camera.position,
+            fov: speedGridConfig.camera.fov,
+          }}
+        >
+          <LandingScene />
+        </Canvas>
+      </div>
 
       <LandingUi
         step={currentStep}

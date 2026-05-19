@@ -27,8 +27,9 @@ export const MobileControls = ({
     baseY: number;
     knobX: number;
     knobY: number;
+    norm: number;
     visible: boolean;
-  }>({ baseX: 0, baseY: 0, knobX: 0, knobY: 0, visible: false });
+  }>({ baseX: 0, baseY: 0, knobX: 0, knobY: 0, norm: 0, visible: false });
 
   // Track which touch IDs belong to joystick vs look
   const joystickTouchId = useRef<number | null>(null);
@@ -62,6 +63,7 @@ export const MobileControls = ({
               baseY: t.clientY,
               knobX: t.clientX,
               knobY: t.clientY,
+              norm: 0,
               visible: true,
             });
           }
@@ -97,7 +99,7 @@ export const MobileControls = ({
           inputRef.current.moveX = Math.cos(angle) * norm;
           inputRef.current.moveZ = Math.sin(angle) * norm;
 
-          setJoystick((j) => ({ ...j, knobX, knobY }));
+          setJoystick((j) => ({ ...j, knobX, knobY, norm }));
         }
 
         if (t.identifier === lookTouchId.current) {
@@ -118,7 +120,7 @@ export const MobileControls = ({
           joystickTouchId.current = null;
           inputRef.current.moveX = 0;
           inputRef.current.moveZ = 0;
-          setJoystick((j) => ({ ...j, visible: false }));
+          setJoystick((j) => ({ ...j, norm: 0, visible: false }));
         }
 
         if (t.identifier === lookTouchId.current) {
@@ -147,24 +149,33 @@ export const MobileControls = ({
         <>
           {/* Base ring */}
           <div
-            className="absolute rounded-full border border-white/20 bg-white/5"
+            className="absolute rounded-full border bg-white/5"
             style={{
               width: JOYSTICK_MAX_RADIUS * 2,
               height: JOYSTICK_MAX_RADIUS * 2,
               left: joystick.baseX - JOYSTICK_MAX_RADIUS,
               top: joystick.baseY - JOYSTICK_MAX_RADIUS,
+              borderColor: `rgba(255,255,255,${0.12 + joystick.norm * 0.28})`,
             }}
           />
-          {/* Knob */}
-          <div
-            className="absolute rounded-full bg-white/30"
-            style={{
-              width: 28,
-              height: 28,
-              left: joystick.knobX - 14,
-              top: joystick.knobY - 14,
-            }}
-          />
+          {/* Knob — size and brightness scale with push magnitude */}
+          {(() => {
+            const knobSize = 28 + joystick.norm * 16;
+            const knobOpacity = 0.28 + joystick.norm * 0.42;
+            return (
+              <div
+                className="absolute rounded-full"
+                style={{
+                  width: knobSize,
+                  height: knobSize,
+                  left: joystick.knobX - knobSize / 2,
+                  top: joystick.knobY - knobSize / 2,
+                  background: `rgba(255,255,255,${knobOpacity})`,
+                  transition: "width 60ms linear, height 60ms linear",
+                }}
+              />
+            );
+          })()}
         </>
       )}
 

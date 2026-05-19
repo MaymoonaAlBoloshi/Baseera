@@ -3,13 +3,13 @@ import type { MutableRefObject } from "react";
 
 import { ArtworkFrame } from "./artwork/artwork-frame";
 import { ArtworkLight } from "./artwork/artwork-light";
+import { ArtworkProximityFigure } from "./artwork/artwork-proximity-figure";
 import { GalleryScreen } from "./environment/gallery-screen";
 import { RenderSettings } from "./render-settings";
 import { FootstepAudio } from "./audio/footstep-audio";
 import { createArtworkLayout } from "./artwork/artwork-layout";
 import { GalleryFloor } from "./environment/gallery-floor";
 import { GalleryWall } from "./environment/gallery-wall";
-import { LightAudience } from "./environment/light-audience";
 import { createGalleryMap } from "./map-generator";
 import { MovementController } from "./controls/movement-controller";
 import { ProximityDetector } from "./artwork/proximity-detector";
@@ -27,6 +27,7 @@ type GallerySceneProps = {
   audioIframeRef: MutableRefObject<HTMLIFrameElement | null>;
   onSelectArtwork: (artwork: GalleryArtwork) => void;
   onNearbyArtworkChange: (artwork: GalleryArtwork | null) => void;
+  nearbyArtwork: GalleryArtwork | null;
   isFocusMode: boolean;
   audioEnabled: boolean;
   brightness: number;
@@ -43,6 +44,7 @@ export const GalleryScene = ({
   audioIframeRef,
   onSelectArtwork,
   onNearbyArtworkChange,
+  nearbyArtwork,
   isFocusMode,
   audioEnabled,
   brightness,
@@ -65,6 +67,15 @@ export const GalleryScene = ({
     [artworks, layoutWalls],
   );
 
+  const nearbyArtworkLayout = useMemo(() => {
+    if (!nearbyArtwork) {
+      return null;
+    }
+    return (
+      artworkLayout.find((item) => item.artwork.id === nearbyArtwork.id) ?? null
+    );
+  }, [artworkLayout, nearbyArtwork]);
+
   return (
     <>
       <RenderSettings />
@@ -85,11 +96,6 @@ export const GalleryScene = ({
         mobileInputRef={mobileInputRef}
       />
       <FootstepAudio isMuted={isFocusMode || !audioEnabled} />
-
-      <LightAudience
-        artworkPositions={artworkLayout.map((a) => a.position)}
-        lowQuality={lowQuality}
-      />
 
       <ambientLight
         intensity={artistConfig.ambientIntensity * brightness}
@@ -138,6 +144,8 @@ export const GalleryScene = ({
           onSelect={onSelectArtwork}
         />
       ))}
+
+      <ArtworkProximityFigure target={nearbyArtworkLayout} />
 
       {showScreen && (
         <GalleryScreen

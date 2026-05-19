@@ -31,7 +31,7 @@ function App() {
   };
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden">
+    <div className="relative h-dvh w-screen overflow-hidden">
       {phase === "landing" || phase === "fading" ? (
         <Landing onComplete={handleComplete} />
       ) : (

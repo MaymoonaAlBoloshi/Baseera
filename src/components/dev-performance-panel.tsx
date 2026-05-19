@@ -183,7 +183,8 @@ export function DevPerformancePanel() {
 
   useEffect(() => {
     const perf = performance as PerformanceWithMemory;
-    if (!perf.measureUserAgentSpecificMemory) {
+    const measureMemory = perf.measureUserAgentSpecificMemory;
+    if (!measureMemory) {
       setUaMemoryUnavailable(true);
       return;
     }
@@ -195,7 +196,7 @@ export function DevPerformancePanel() {
 
       uaMemoryPendingRef.current = true;
       try {
-        const result = await perf.measureUserAgentSpecificMemory();
+        const result = await measureMemory.call(perf);
         setUaMemoryMb(result.bytes / MB);
         setUaMemoryUnavailable(false);
       } catch {
